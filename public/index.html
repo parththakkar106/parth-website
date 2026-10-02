@@ -13,7 +13,10 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<!-- Fonts load without blocking first paint; the system fallbacks in site.css cover the gap. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
 <link rel="stylesheet" href="assets/css/site.css">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
@@ -48,7 +51,7 @@
     <div class="menu" id="menu" role="listbox" aria-label="Commands" hidden></div>
     <form class="prompt" id="form" autocomplete="off">
       <label for="cmd">&gt;</label>
-      <input id="cmd" type="text" spellcheck="false" placeholder='Try "/projects" or ask a question' aria-label="Command or question">
+      <input id="cmd" type="text" spellcheck="false" placeholder="Ask anything, or type /help" aria-label="Command or question">
     </form>
     <div class="chips" id="chips">
       <button type="button" data-run="/about">/about</button>
@@ -58,7 +61,7 @@
       <button type="button" data-run="What did Parth build at Goldman?">ask about Goldman</button>
       <button type="button" data-run="What's the weather in Atlanta?">off-topic question</button>
     </div>
-    <div class="status"><span>? for shortcuts · /plain for a normal page</span><span id="modelTag">model: checking…</span></div>
+    <div class="status"><span class="kbd-hint">? for shortcuts · /plain for a normal page</span><span id="modelTag">model: checking…</span></div>
   </div>
 </main>
 
@@ -300,7 +303,7 @@
   </div>
 
   <!-- CONTACT -->
-  <section class="contact" aria-labelledby="s-contact" style="margin-top:96px">
+  <section class="contact" aria-labelledby="s-contact">
     <div class="in">
       <div class="lbl" style="color:#18b548">~/contact</div>
       <h2 id="s-contact">Let's build<br>something<span>.</span></h2>
@@ -311,7 +314,7 @@
         <a class="btn" href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>
         <a class="btn" href="assets/Parth_Thakkar_Resume.pdf" download>Resume PDF</a>
       </div>
-      <small>© 2026 Parth Thakkar · parth.party · built with Claude Code</small>
+      <small>© 2026 Parth Thakkar · parth.party</small>
     </div>
   </section>
 </main>

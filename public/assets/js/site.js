@@ -29,11 +29,11 @@
 
   // terminal heatmap as block characters
   function asciiHeat() {
-    var glyph = ['·', '░', '▒', '▓', '█'], rows = ['', '', '', '', '', '', ''];
+    var rows = ['', '', '', '', '', '', ''];
     weeks.forEach(function (wk) {
       for (var d = 0; d < 7; d++) {
         var l = d < wk.length ? level(wk[d]) : 0;
-        rows[d] += d < wk.length ? '<span class="h' + l + '">' + glyph[l] + '</span>' : ' ';
+        rows[d] += d < wk.length ? '<span class="h' + l + '">■</span>' : ' ';
       }
     });
     var lbl = ['   ', 'Mon', '   ', 'Wed', '   ', 'Fri', '   '];
@@ -60,29 +60,34 @@
 
   function el(cls, html) { var e = document.createElement('div'); e.className = cls; e.innerHTML = html; return e; }
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function scroll() { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }
+  // Touch devices get no auto-focus, so the keyboard only opens when the visitor taps the prompt.
+  var FINE = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  function focusInput() { if (FINE) input.focus({ preventScroll: true }); }
+  function atBottom() { return innerHeight + scrollY >= document.documentElement.scrollHeight - 160; }
+  function scroll() { window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' }); }
+  // While text streams in, jump (not smooth-scroll) so repeated calls never fight each other.
+  function follow(fn) { var b = atBottom(); fn(); if (b) window.scrollTo(0, document.documentElement.scrollHeight); }
+  // A label/value row that sits side by side on wide screens and stacks on phones.
+  function kv(k, v) { return '<span class="kv"><span class="k">' + k + '</span><span class="v">' + v + '</span></span>'; }
 
   var OUT = {
     '/about':
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
-      'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind\n$600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
+      'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
       'CS from BITS Pilani (2024). US Green Card, no sponsorship needed.\n' +
       '<span class="d">Next: /work · /projects · or ask anything</span>',
     '/work':
-      '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>\n' +
-      '  <span class="g">✓</span> Liability Optimizer      $600B+ funding · solver runs 90% faster\n' +
-      '  <span class="g">✓</span> AI Planning Assistant    ReAct agent, 20+ tools · ~60% less planning time\n' +
-      '  <span class="g">✓</span> Infra                    4+ k8s microservices · Redis cache −74% latency\n\n' +
-      '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>\n' +
-      '  <span class="g">✓</span> EV routing backend (FastAPI, Dijkstra on a geospatial graph)',
+      '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
+      kv('<span class="g">✓</span> Liability Optimizer', '$600B+ funding · solver runs 90% faster') +
+      kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent, 20+ tools · ~60% less planning time') +
+      kv('<span class="g">✓</span> Infra', '4+ k8s microservices · Redis cache −74% latency') + '\n' +
+      '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>' +
+      kv('<span class="g">✓</span> EV routing backend', 'FastAPI, Dijkstra on a geospatial graph'),
     '/projects':
-      '<span class="h">ai-dnd/</span>          LLM storytelling engine · branching story tree · 549 tests\n' +
-      '                  <a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>\n' +
-      '<span class="h">showdown/</span>        real-time 1v1 trivia · WebSockets · 31,777 questions\n' +
-      '                  <a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>\n' +
-      '<span class="h">job-copilot/</span>     finds jobs daily, autofills applications, never auto-submits\n' +
-      '                  <span class="d">private repo</span>\n' +
-      '<span class="h">fog-computing/</span>   Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>\n\n' +
+      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine · branching story tree · 549 tests\n<a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
+      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia · WebSockets · 31,777 questions\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
+      kv('<span class="h">job-copilot/</span>', 'finds jobs daily, autofills applications, never auto-submits\n<span class="d">private repo</span>') +
+      kv('<span class="h">fog-computing/</span>', 'Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
     '/contact':
       'email     <span class="bl">thakkarparth106@gmail.com</span>\n' +
@@ -95,8 +100,8 @@
   };
 
   function helpText() {
-    return COMMANDS.map(function (c) { return '<span class="h">' + (c[0] + '                ').slice(0, 16) + '</span><span class="d">' + c[1] + '</span>'; }).join('\n') +
-      '\n\n<span class="d">Anything else you type goes to the model, which only answers from Parth\'s resume and project notes.</span>';
+    return COMMANDS.map(function (c) { return kv('<span class="h">' + c[0] + '</span>', '<span class="d">' + c[1] + '</span>'); }).join('') +
+      '\n<span class="d">Anything else you type goes to the model, which only answers from Parth\'s resume and project notes.</span>';
   }
 
   // scripted "LLM" answers for the mock
@@ -129,7 +134,7 @@
     else if (cmd === '/contributions') {
       b.appendChild(el('out', '<span class="h">github.com/parththakkar106</span> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
       var h = el('heat', '<pre>' + asciiHeat() + '</pre>'); b.appendChild(h);
-      b.appendChild(el('out', '<span class="d">less </span><span class="h0">·</span><span class="h1">░</span><span class="h2">▒</span><span class="h3">▓</span><span class="h4">█</span><span class="d"> more</span>'));
+      b.appendChild(el('out', '<span class="d">less </span><span class="h0">■</span><span class="h1">■</span><span class="h2">■</span><span class="h3">■</span><span class="h4">■</span><span class="d"> more</span>'));
     }
     else if (OUT.hasOwnProperty(cmd)) b.appendChild(el('out', OUT[cmd]));
     else b.appendChild(el('dot err', 'Unknown command ' + esc(cmd) + '. Try /help.'));
@@ -147,7 +152,7 @@
     .then(function (r) { return r.ok ? r.json() : { live: false }; })
     .catch(function () { return { live: false }; })
     .then(function (d) {
-      modelTag.innerHTML = d.live ? 'model: live via OpenRouter' : '<span class="demo-pill">DEMO</span> scripted answers · live AI coming soon';
+      modelTag.innerHTML = d.live ? 'model: live via OpenRouter' : '<span class="demo-pill">DEMO</span> scripted answers<span class="soon"> · live AI coming soon</span>';
     });
 
   // Resolves to a streaming Response, or null when the live model is off or unreachable.
@@ -166,7 +171,7 @@
       return reader.read().then(function (r) {
         if (r.done) return acc;
         acc += dec.decode(r.value, { stream: true });
-        node.innerHTML = fmt(acc); scroll();
+        follow(function () { node.innerHTML = fmt(acc); });
         return pump();
       });
     })();
@@ -214,7 +219,7 @@
       return stream(d, text).then(function () {
         b.appendChild(el('demo', '<span class="demo-pill">DEMO</span> scripted answer · the live AI model is not connected yet'));
       });
-    }).then(function () { busy = false; input.focus({ preventScroll: true }); scroll(); });
+    }).then(function () { busy = false; focusInput(); });
   }
 
   // stream text token by token without breaking HTML tags
@@ -227,8 +232,7 @@
           buf += parts[i++];
           while (i < parts.length && parts[i].charAt(0) === '<') buf += parts[i++];
         }
-        node.innerHTML = buf;
-        if (i % 12 === 0) scroll();
+        follow(function () { node.innerHTML = buf; });
         if (i < parts.length) setTimeout(step, 22); else done();
       })();
     });
@@ -239,7 +243,7 @@
     if (!text || busy) return;
     addUser(text);
     if (text.charAt(0) === '/') { runSlash(text.split(/\s+/)[0].toLowerCase()); scroll(); }
-    else ask(text);
+    else { ask(text); scroll(); }
   }
 
   // slash autocomplete menu
@@ -289,12 +293,33 @@
     vt.setAttribute('aria-pressed', String(!p)); vp.setAttribute('aria-pressed', String(p));
     try { localStorage.setItem('pp-view', v); } catch (e) {}
     window.scrollTo(0, 0);
-    if (!p) input.focus({ preventScroll: true });
+    if (!p) focusInput();
+    var shown = p ? plain : term;
+    shown.classList.remove('enter'); void shown.offsetWidth; shown.classList.add('enter');
   }
   vt.addEventListener('click', function () { setView('term'); });
   vp.addEventListener('click', function () { setView('plain'); });
   if (document.documentElement.classList.contains('start-plain')) setView('plain');
   document.documentElement.classList.remove('start-plain');
+
+  /* ---------- plain view: cards ease in as they scroll into view ---------- */
+  var calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if ('IntersectionObserver' in window && !calm) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); } });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    [].slice.call(plain.querySelectorAll('section .sec-title, .about p, .fact, .stats > div, .co header, .wcard, .sk, .edu, .pj, .aw, .contact .in > *')).forEach(function (n) {
+      // siblings in the same row get a small stagger
+      var k = [].indexOf.call(n.parentNode.children, n) % 4;
+      n.style.transitionDelay = (k * 60) + 'ms';
+      n.classList.add('reveal'); io.observe(n);
+      // once settled, drop the reveal styles so hover transitions keep their own timing
+      n.addEventListener('transitionend', function done(e) {
+        if (e.target !== n || e.propertyName !== 'transform') return;
+        n.removeEventListener('transitionend', done); n.classList.remove('reveal', 'seen'); n.style.transitionDelay = '';
+      });
+    });
+  }
 
   document.getElementById('openTerm').addEventListener('click', function () { setView('term'); });
   document.getElementById('copyMail').addEventListener('click', function () {

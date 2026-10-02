@@ -34,7 +34,7 @@ AI D&D (public, 2026): an AI Dungeon-style interactive storytelling app that wor
 Showdown (2026, live at showdown.parth.party, private repo): a real-time 1v1 comic-style trivia game. Two players get the same question on the same 15-second clock, with speed bonuses, streak multipliers up to 3x and a chaos mode for stealing points from the opponent's topics. 31,777 questions across 9 categories. One FastAPI process owns every live room over WebSockets, each room runs its timers as asyncio tasks, and Neon Postgres is read at startup and written when a match ends. Optional Google sign-in.
 Job Copilot (2026, private): finds new early-career roles every day on Greenhouse, Lever, Ashby and Workday job boards, then a Chrome extension fills most of each application. It asks the user when unsure and never clicks Submit. Python, Chrome extension, GitHub Actions.
 Volunteer-Support Fog Computing (2022): a Java fog system across about 20 nodes with volunteer-node load distribution for delay-sensitive IoT. Versus pure cloud: 31% lower delay, 79% lower energy use, 65% lower network usage.
-This website (parth.party): a terminal-style portfolio with a plain view, built with Claude Code, hosted on Cloudflare.
+This website (parth.party): a terminal-style portfolio with a plain view, hosted on Cloudflare.
 
 ## Leadership and awards
 - Third place out of 400+ participants across India in the Goldman Sachs Intern Coding Challenge (2023).
