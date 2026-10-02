@@ -321,6 +321,55 @@
     });
   }
 
+  /* ---------- plain view: faint code rain in the background ---------- */
+  (function () {
+    var c = document.getElementById('rain'), ctx = c.getContext && c.getContext('2d');
+    if (!ctx) return;
+    var glyphs = '01<>/{}[]=+*$#λ∑ｱｲｳｴｵｶｷｸｹｺ', TRAIL = 14;
+    var small, fs, cols, ys, sp, w = 0, h = 0, raf = 0, last = 0;
+    function reset(i) { sp[i] = .3 + Math.random() * .7; }
+    function size() {
+      var nw = innerWidth, nh = innerHeight, dpr = Math.min(window.devicePixelRatio || 1, nw <= 640 ? 1.5 : 2);
+      c.width = nw * dpr; c.height = nh * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // phone address bars change only the height; keep the columns where they are
+      if (nw !== w) {
+        small = nw <= 640; fs = small ? 14 : 16; cols = Math.ceil(nw / fs); ys = []; sp = [];
+        for (var i = 0; i < cols; i++) { ys[i] = Math.random() * nh / fs; reset(i); }
+      }
+      w = nw; h = nh; draw(false);
+    }
+    function draw(move) {
+      var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#18b548';
+      ctx.clearRect(0, 0, w, h); ctx.font = fs + 'px "JetBrains Mono", ui-monospace, monospace'; ctx.fillStyle = accent;
+      for (var i = 0; i < cols; i += small ? 2 : 1) {
+        for (var j = 0; j < TRAIL; j++) {
+          var y = (ys[i] - j) * fs; if (y < -fs || y > h) continue;
+          ctx.globalAlpha = j === 0 ? .24 : .11 * (1 - j / TRAIL);
+          ctx.fillText(glyphs[(i * 7 + Math.floor(ys[i]) - j + glyphs.length * 99) % glyphs.length], i * fs, y);
+        }
+        if (move) { ys[i] += sp[i] * .5; if ((ys[i] - TRAIL) * fs > h) { ys[i] = 0; reset(i); } }
+      }
+      ctx.globalAlpha = 1;
+    }
+    function loop(t) {
+      raf = requestAnimationFrame(loop);
+      if (t - last < 1000 / 24) return;
+      last = t; draw(true);
+    }
+    function run() {
+      var on = !plain.hidden && !document.hidden && !calm;
+      if (on && !raf) raf = requestAnimationFrame(loop);
+      if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
+    }
+    size();
+    addEventListener('resize', size);
+    document.addEventListener('visibilitychange', run);
+    new MutationObserver(function () { if (!plain.hidden) size(); run(); }).observe(plain, { attributes: true, attributeFilter: ['hidden'] });
+    // redraw in the new colour when the system theme flips
+    if (window.matchMedia) { var mq = matchMedia('(prefers-color-scheme: dark)'); (mq.addEventListener ? mq.addEventListener('change', size) : mq.addListener(size)); }
+    run();
+  })();
+
   document.getElementById('openTerm').addEventListener('click', function () { setView('term'); });
   document.getElementById('copyMail').addEventListener('click', function () {
     var b = this, t = b.textContent;

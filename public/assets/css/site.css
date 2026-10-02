@@ -173,8 +173,9 @@ body.plain .mocknote { color: var(--muted); }
 
 /* ---------- plain view ---------- */
 /* Layout: editorial single page, sections in resume order, each labelled like a path (~/experience) to echo the terminal. */
-#plain { font: 16px/1.6 var(--sans); padding-inline: 16px; padding-block: 72px 0; overflow-x: clip;
-  background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 22px 22px; }
+#plain { font: 16px/1.6 var(--sans); padding-inline: 16px; padding-block: 72px 0; overflow-x: clip; position: relative; isolation: isolate; }
+/* Faint code rain behind everything, drawn by site.js. */
+#rain { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 #plain .col { max-width: 1080px; margin: 0 auto; display: grid; gap: 96px; }
 #plain a { color: inherit; }
 #plain :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
