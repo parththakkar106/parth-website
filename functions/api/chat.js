@@ -9,7 +9,7 @@ import { SYSTEM_PROMPT } from './_knowledge.js';
 
 const MAX_TURNS = 8;
 const MAX_CHARS = 1000;
-const ALLOWED_ORIGINS = [/^https:\/\/(www\.)?parth\.party$/, /^https:\/\/[a-z0-9-]+\.parth-party\.pages\.dev$/, /^https:\/\/parth-party\.pages\.dev$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
+const ALLOWED_ORIGINS = [/^https:\/\/(www\.)?parth\.party$/, /^https:\/\/([a-z0-9-]+\.)?parth-(party|website)\.pages\.dev$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 
 const isLive = env => Boolean(env.OPENROUTER_API_KEY && env.OPENROUTER_MODEL);
 

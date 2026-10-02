@@ -24,7 +24,7 @@ scripts/fetch-contributions.mjs
 ## Chat: demo mode and going live
 
 Until an OpenRouter key and model are configured, `/api/chat` returns 503 and the terminal plays scripted answers
-marked **DEMO**. To go live, in Cloudflare: **Workers & Pages → parth-party → Settings → Variables and secrets**:
+marked **DEMO**. To go live, in Cloudflare: **Workers & Pages → parth-website → Settings → Variables and secrets**:
 
 | Name | Type | Value |
 | --- | --- | --- |
