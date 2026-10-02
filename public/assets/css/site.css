@@ -450,3 +450,16 @@ main.enter { animation: fadein .28s ease both; }
   .gauge { width: 112px; height: 112px; }
   .awards { gap: 22px; }
 }
+
+/* about: linked facts with logos; inline links */
+a.fact { text-decoration: none; transition: border-color .15s ease, transform .15s ease; }
+a.fact:hover { border-color: var(--fg); transform: translateY(-2px); }
+.fact .ic.logo img { width: 38px; height: 38px; display: block; }
+.fact .ic { font-size: 13px; letter-spacing: .02em; }
+.about p a { text-decoration: none; }
+.about p a:hover mark { background: var(--accent); color: #fff; }
+.co h3 a, .edu h3 a, .pj h3 a { text-decoration: none; }
+.co h3 a:hover, .edu h3 a:hover, .pj h3 a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+a.yr { text-decoration: none; }
+a.yr:hover { text-decoration: underline; }
+.out a.h { color: var(--t-accent); text-decoration: none; }

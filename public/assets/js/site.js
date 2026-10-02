@@ -74,7 +74,7 @@
     '/about':
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
       'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
-      'CS from BITS Pilani (2024). US Green Card, no sponsorship needed.\n' +
+      'CS from <a href="https://www.bits-pilani.ac.in/" target="_blank" rel="noopener">BITS Pilani</a> (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
       '<span class="d">Next: /work · /projects · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
@@ -90,7 +90,7 @@
       kv('<span class="h">fog-computing/</span>', 'Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
     '/contact':
-      'email     <span class="bl">thakkarparth106@gmail.com</span>\n' +
+      'email     <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>\n' +
       'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>\n' +
       'linkedin  <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">linkedin.com/in/parth-thakkar-10</a>',
     '/resume':
@@ -118,9 +118,9 @@
     { k: /d&d|dnd|dungeon|story|referee/i,
       reads: ['projects/ai-dnd.md', 'projects/ai-dnd/GUIDE.md'],
       a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. 549 backend tests.\n\n<a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">Play the demo</a>' },
-    { k: /visa|sponsor|green card|authori|hire|available|relocat/i,
-      reads: ['about/resume.md'],
-      a: 'Parth is a US Green Card holder, so no visa sponsorship is needed. He is looking for software engineering roles in the US. Run /contact to reach him.' }
+    { k: /contact|reach|email|talk|chat|connect|linkedin/i,
+      reads: ['about/contact.md'],
+      a: 'Parth is always happy to talk about his work. Email <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>, or find him on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a> and <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>.' }
   ];
   var OFFTOPIC = /weather|recipe|poem|joke|stock price|bitcoin|write me|code for|translate/i;
 
@@ -132,7 +132,7 @@
     if (cmd === '/plain') { setView('plain'); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
-      b.appendChild(el('out', '<span class="h">github.com/parththakkar106</span> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
+      b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
       var h = el('heat', '<pre>' + asciiHeat() + '</pre>'); b.appendChild(h);
       b.appendChild(el('out', '<span class="d">less </span><span class="h0">■</span><span class="h1">■</span><span class="h2">■</span><span class="h3">■</span><span class="h4">■</span><span class="d"> more</span>'));
     }
@@ -325,7 +325,7 @@
   document.getElementById('copyMail').addEventListener('click', function () {
     var b = this, t = b.textContent;
     try {
-      navigator.clipboard.writeText(t).then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = t; }, 1400); }, function () {});
+      navigator.clipboard.writeText('thakkarparth106@gmail.com').then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = t; }, 1400); }, function () {});
     } catch (e) {}
   });
 })();
