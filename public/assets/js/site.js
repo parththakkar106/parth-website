@@ -50,6 +50,8 @@
     ['/about', 'Who Parth is, in four lines'],
     ['/work', 'Experience at Goldman Sachs and MapMyIndia'],
     ['/projects', 'AI D&D, Showdown, Job Copilot and more'],
+    ['/interests', 'Football, Messi and video games'],
+    ['/penalty', 'Take five penalties against the keeper'],
     ['/contributions', 'GitHub activity, last 3 months'],
     ['/resume', 'Download the resume PDF'],
     ['/contact', 'Email, GitHub, LinkedIn'],
@@ -75,7 +77,7 @@
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
       'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
       'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://dnd.parth.party/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
-      '<span class="d">Next: /work · /projects · or ask anything</span>',
+      '<span class="d">Next: /work · /projects · /interests · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
       kv('<span class="g">✓</span> Liability Optimizer', '$600B+ funding · solver runs 90% faster') +
@@ -89,6 +91,11 @@
       kv('<span class="h">job-copilot/</span>', 'finds jobs daily, autofills applications, never auto-submits\n<span class="d">private repo</span>') +
       kv('<span class="h">fog-computing/</span>', 'Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
+    '/interests':
+      '<span class="h">Off the clock</span>' +
+      kv('<span class="h">football</span>', 'watches a lot of it · big Messi fan') +
+      kv('<span class="h">video games</span>', 'FIFA, Split Fiction, GTA, Watch Dogs, and more') + '\n' +
+      '<span class="d">Fancy a shootout? Run /penalty.</span>',
     '/contact':
       'email     <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>\n' +
       'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>\n' +
@@ -118,6 +125,9 @@
     { k: /d&d|dnd|dungeon|story|referee/i,
       reads: ['projects/ai-dnd.md', 'projects/ai-dnd/GUIDE.md'],
       a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. 549 backend tests.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
+    { k: /fun|hobb|interest|football|soccer|messi|game|fifa|gta/i,
+      reads: ['about/interests.md'],
+      a: 'Outside work Parth watches a lot of football and is a big <span class="h">Messi</span> fan. He also plays video games: FIFA, Split Fiction, GTA, Watch Dogs and more.\n\n<span class="d">Run /penalty to take a few spot kicks yourself.</span>' },
     { k: /contact|reach|email|talk|chat|connect|linkedin/i,
       reads: ['about/contact.md'],
       a: 'Parth is always happy to talk about his work. Email <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>, or find him on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a> and <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>.' }
@@ -130,6 +140,7 @@
     var b = el('block', '');
     if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); return; }
     if (cmd === '/plain') { setView('plain'); return; }
+    if (cmd === '/penalty' || cmd === '/football') { penalty(); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
       b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
@@ -222,6 +233,149 @@
     }).then(function () { busy = false; focusInput(); });
   }
 
+  /* ---------- /penalty: a five-kick shootout against an ASCII keeper ---------- */
+  // Goal is 25 columns inside the posts; the three aim zones sit at these columns.
+  var ZX = [4, 12, 20], GW = 25, KICKS = 5;
+  // Power bar: 20 cells. weak → always saved, good → keeper guesses, top bins → unstoppable, over → misses.
+  var BAR = 20, ZONE = function (i) { return i < 7 ? 0 : i < 15 ? 1 : i < 17 ? 2 : 3; };
+  var pen = null;
+
+  function penalty() {
+    var b = el('block pk', ''); log.appendChild(b);
+    var head = el('out', '<span class="h">Penalty shootout</span> <span class="d">· ' + KICKS + ' kicks · stop the power bar in the green, the bright cells are the top corner</span>');
+    var board = el('out pk-board', ''), msg = el('out pk-msg', ''), ctl = el('pk-ctl', '');
+    ctl.innerHTML = '<button type="button" data-a="0" aria-label="Aim left">◀ left</button><button type="button" data-a="1" aria-label="Aim middle">▲ middle</button><button type="button" data-a="2" aria-label="Aim right">right ▶</button><button type="button" class="shoot" data-a="s">SHOOT</button><button type="button" class="quit" data-a="q" aria-label="Quit">esc</button>';
+    var hint = el('out pk-hint d', '←/↑/→ or 1/2/3 to aim · space to shoot · esc to quit');
+    [head, board, msg, ctl, hint].forEach(function (n) { b.appendChild(n); });
+    pen = { b: b, board: board, msg: msg, ctl: ctl, hint: hint, aim: 1, kick: 0, res: [], phase: 'aim', t0: performance.now(), pw: 0, raf: 0, ball: null, keeper: 1, dive: false };
+    busy = true; input.disabled = true; input.blur(); input.placeholder = 'playing /penalty · esc to quit';
+    ctl.addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t) return;
+      var a = t.dataset.a; t.blur();
+      if (a === 's') shoot(); else if (a === 'q') endPen(true); else setAim(+a);
+    });
+    document.body.classList.add('pk-on');
+    drawPen();
+    pen.raf = requestAnimationFrame(tick);
+    window.scrollTo(0, document.documentElement.scrollHeight);
+  }
+
+  function setAim(a) { if (pen && pen.phase === 'aim') { pen.aim = a; drawPen(); } }
+
+  function tick(t) {
+    if (!pen) return;
+    pen.raf = requestAnimationFrame(tick);
+    if (pen.phase !== 'aim') return;
+    var period = Math.max(700, 1500 - pen.kick * 160); // a little quicker every kick
+    var x = ((t - pen.t0) % period) / period;
+    pen.pw = Math.min(BAR - 1, Math.floor((x < .5 ? x * 2 : 2 - x * 2) * BAR));
+    drawPen();
+  }
+
+  function shoot() {
+    if (!pen || pen.phase !== 'aim') return;
+    pen.phase = 'fly';
+    var z = ZONE(pen.pw), aim = pen.aim;
+    var guess = Math.floor(Math.random() * 3);
+    var goal, line;
+    if (z === 0) { goal = false; guess = aim; line = 'Saved. Too soft, the keeper just collects it.'; }
+    else if (z === 3) { goal = false; line = 'Over the bar. Into row Z.'; }
+    else if (z === 2) { goal = true; line = guess === aim ? 'GOAL! Right in the top corner, the keeper got a glove on it and it still went in.' : 'GOAL! Top bins, no chance.'; }
+    else if (guess === aim) { goal = false; line = 'Saved! The keeper guessed right.'; }
+    else { goal = true; line = ['GOAL! Sent the keeper the wrong way.', 'GOAL! Cool as you like.', 'GOAL! Bottom of the net.'][Math.floor(Math.random() * 3)]; }
+    // ball flies from the spot (row 8) to its end row: 0 over the bar, 2 top corner, 4 otherwise
+    var endRow = z === 3 ? 0 : z === 2 ? 2 : 4, endCol = ZX[aim] + 2, steps = 4, i = 0;
+    pen.keeper = guess;
+    (function fly() {
+      if (!pen) return;
+      i++;
+      var f = i / steps;
+      pen.ball = [Math.round(8 + (endRow - 8) * f), Math.round(14 + (endCol - 14) * f)];
+      pen.dive = i >= 2;
+      drawPen();
+      if (i < steps) return setTimeout(fly, 90);
+      pen.res.push(goal);
+      follow(function () { pen.msg.innerHTML = (goal ? '<span class="h">' : '<span class="pk-miss">') + esc(line) + '</span>'; });
+      drawPen();
+      setTimeout(function () {
+        if (!pen) return;
+        pen.kick++;
+        if (pen.kick >= KICKS) return endPen(false);
+        pen.phase = 'aim'; pen.ball = null; pen.dive = false; pen.keeper = 1; pen.aim = 1; pen.t0 = performance.now();
+        pen.msg.innerHTML = '';
+      }, 1300);
+    })();
+  }
+
+  function dots(res) {
+    var out = [];
+    for (var i = 0; i < KICKS; i++) out.push(i < res.length ? (res[i] ? '<span class="h">●</span>' : '<span class="pk-miss">✕</span>') : '<span class="pk-dim">○</span>');
+    return out.join(' ');
+  }
+
+  function drawPen() {
+    var W = GW + 4, rows = [], r, c;
+    for (r = 0; r < 9; r++) { rows.push([]); for (c = 0; c < W; c++) rows[r].push([' ', '']); }
+    function put(r, c, str, cls) { for (var k = 0; k < str.length; k++) if (c + k >= 0 && c + k < W) rows[r][c + k] = [str[k], cls]; }
+    // frame: crossbar on row 1, posts down to row 5, net dots inside
+    put(1, 1, '┌' + Array(GW + 1).join('─') + '┐', 'pk-post');
+    for (r = 2; r <= 5; r++) {
+      put(r, 1, '│', 'pk-post'); put(r, GW + 2, '│', 'pk-post');
+      for (c = 0; c < GW; c++) if ((c + r) % 2 === 0) put(r, c + 2, '·', 'pk-net');
+    }
+    put(6, 0, Array(W + 1).join('‾'), 'pk-dim');
+    // aim marker while aiming
+    if (pen.phase === 'aim') put(2, ZX[pen.aim] + 2, '×', 'h');
+    // keeper: stands in the middle, dives at the guess once the ball is on its way
+    var kx = ZX[1] + 1;
+    if (!pen.dive) { put(3, kx, '\\o/', 'pk-kp'); put(4, kx + 1, '|', 'pk-kp'); put(5, kx, '/ \\', 'pk-kp'); }
+    else if (pen.keeper === 1) { put(2, kx, '\\o/', 'pk-kp'); put(3, kx + 1, '|', 'pk-kp'); put(4, kx, '/ \\', 'pk-kp'); }
+    else if (pen.keeper === 0) put(4, ZX[0] + 1, 'o==<', 'pk-kp');
+    else put(4, ZX[2] + 1, '>==o', 'pk-kp');
+    // ball on the spot, or in flight
+    var ball = pen.ball || [8, 14];
+    put(ball[0], ball[1], '●', 'h');
+    var html = rows.map(function (row) {
+      return row.map(function (p) { return p[1] ? '<span class="' + p[1] + '">' + esc(p[0]) + '</span>' : esc(p[0]); }).join('');
+    }).join('\n');
+    pen.board.innerHTML = '<pre>' + html + '</pre>';
+    var bar = '';
+    for (var i = 0; i < BAR; i++) bar += '<span class="pw' + ZONE(i) + (i <= pen.pw ? ' on' : '') + '">' + (i <= pen.pw ? '■' : '□') + '</span>';
+    pen.board.innerHTML += '<div class="pk-row"><span class="d">power </span>' + bar + '</div>' +
+      '<div class="pk-row"><span class="d">kick ' + Math.min(pen.kick + 1, KICKS) + '/' + KICKS + '  </span>' + dots(pen.res) + '</div>';
+  }
+
+  function endPen(quit) {
+    if (!pen) return;
+    var p = pen; pen = null;
+    cancelAnimationFrame(p.raf);
+    p.ctl.remove(); p.hint.remove();
+    var n = p.res.filter(Boolean).length, best = 0;
+    if (!quit) {
+      try { best = Math.max(+localStorage.getItem('pp-pen-best') || 0, n); localStorage.setItem('pp-pen-best', best); } catch (e) { best = n; }
+    }
+    var verdict = quit ? 'Shootout abandoned after ' + p.res.length + (p.res.length === 1 ? ' kick.' : ' kicks.')
+      : n === 5 ? '5 from 5. Messi would be proud.'
+      : n === 4 ? '4 from 5. Clinical.'
+      : n === 3 ? '3 from 5. The keeper read a couple.'
+      : n + ' from 5. The keeper had your number.';
+    p.msg.innerHTML = '<span class="h">' + verdict + '</span>' + (quit || !best ? '' : '  <span class="d">best: ' + best + '/5</span>') +
+      '\n<span class="d">Run /penalty to go again.</span>';
+    busy = false; input.disabled = false; input.placeholder = 'Ask anything, or type /help';
+    document.body.classList.remove('pk-on');
+    focusInput(); window.scrollTo(0, document.documentElement.scrollHeight);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (!pen || term.hidden) return;
+    var k = e.key, a = { ArrowLeft: 0, ArrowUp: 1, ArrowRight: 2, '1': 0, '2': 1, '3': 2 }[k];
+    if (a !== undefined) setAim(a);
+    else if (k === ' ' || k === 'Enter') shoot();
+    else if (k === 'Escape') endPen(true);
+    else return;
+    e.preventDefault();
+  });
+
   // stream text token by token without breaking HTML tags
   function stream(node, html) {
     var parts = html.match(/<[^>]+>|&[a-z#0-9]+;|[^<&\s]+|\s+/g) || [];
@@ -308,7 +462,7 @@
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('seen'); io.unobserve(e.target); } });
     }, { rootMargin: '0px 0px -8% 0px' });
-    [].slice.call(plain.querySelectorAll('section .sec-title, .about p, .fact, .stats > div, .co header, .wcard, .sk, .edu, .pj, .aw, .contact .in > *')).forEach(function (n) {
+    [].slice.call(plain.querySelectorAll('section .sec-title, .about p, .fact, .co header, .wcard, .sk, .edu, .pj, .aw, .lk, .contact .in > *')).forEach(function (n) {
       // siblings in the same row get a small stagger
       var k = [].indexOf.call(n.parentNode.children, n) % 4;
       n.style.transitionDelay = (k * 60) + 'ms';
@@ -371,6 +525,7 @@
   })();
 
   document.getElementById('openTerm').addEventListener('click', function () { setView('term'); });
+  document.getElementById('playPen').addEventListener('click', function () { setView('term'); if (!busy) { addUser('/penalty'); penalty(); } });
   document.getElementById('copyMail').addEventListener('click', function () {
     var b = this, t = b.textContent;
     try {

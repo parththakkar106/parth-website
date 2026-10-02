@@ -58,6 +58,7 @@
       <button type="button" data-run="/projects">/projects</button>
       <button type="button" data-run="/work">/work</button>
       <button type="button" data-run="/contributions">/contributions</button>
+      <button type="button" data-run="/penalty">/penalty ⚽</button>
       <button type="button" data-run="What did Parth build at Goldman?">ask about Goldman</button>
       <button type="button" data-run="What's the weather in Atlanta?">off-topic question</button>
     </div>
@@ -89,18 +90,13 @@
           <div class="q">what does Parth do?</div>
           <div class="r t">Read<span>(about/resume.md)</span></div>
           <div class="r">Builds the solver behind <span class="c">$600B+</span> of funding at Goldman Sachs, plus a LangGraph agent that plans it with you.</div>
-          <div class="q">and for fun? <span class="cursor" aria-hidden="true"></span></div>
+          <div class="q">and for fun?</div>
+          <div class="r">Football (big Messi fan) and games like FIFA, Split Fiction and GTA. Try <span class="c">/penalty</span>.</div>
+          <div class="q"><span class="cursor" aria-hidden="true"></span></div>
         </div>
         <button type="button" id="openTerm">Open the terminal →</button>
       </div>
     </header>
-
-    <div class="stats" aria-label="Highlights">
-      <div><b>$600B<small>+</small></b><span>of firm funding run through my optimizer</span></div>
-      <div><b>90<small>%</small></b><span>faster solver runs with warm starts</span></div>
-      <div><b>~60<small>%</small></b><span>less time to build the weekly plan, via an LLM agent</span></div>
-      <div><b>74<small>%</small></b><span>lower response time from a Redis state cache</span></div>
-    </div>
 
     <!-- 1. ABOUT -->
     <section aria-labelledby="s-about">
@@ -305,6 +301,37 @@
         <div class="aw"><b>3rd<small> / 400+</small></b><h4>Intern Coding Challenge</h4><span>Goldman Sachs, across India</span><span class="yr">2023</span></div>
         <div class="aw"><b>10,000<small>+</small></b><h4>Scheduling Head, BOSM</h4><span>Department of Controls for India's largest student-run sports fest</span><span class="yr">2020 – 2024</span></div>
         <div class="aw"><b>200<small>+</small></b><h4>Microsoft Learn Student Ambassadors</h4><span>Built scavenger-hunt problems and quizzes for the Competitive Coding SIG</span><span class="yr">2022 – 2023</span></div>
+      </div>
+    </section>
+
+    <!-- 7. INTERESTS -->
+    <section aria-labelledby="s-likes">
+      <div class="lbl">~/interests</div>
+      <h2 class="sec-title" id="s-likes">When I'm not <em>shipping</em>.</h2>
+      <div class="likes">
+        <article class="lk">
+          <div class="k">Football</div>
+          <div class="ten" aria-hidden="true">10</div>
+          <h3>Watching football</h3>
+          <p>I watch a lot of it, and I'm a Messi fan through and through.</p>
+        </article>
+        <article class="lk">
+          <div class="k">Video games</div>
+          <h3>On the controller</h3>
+          <div class="chips2"><span class="hot">FIFA</span><span>Split Fiction</span><span>GTA</span><span>Watch Dogs</span><span>and more</span></div>
+          <p>Sports games, co-op adventures and open worlds.</p>
+        </article>
+        <article class="lk dark">
+          <div class="k">Minigame</div>
+          <pre class="goal" aria-hidden="true"><span class="d">┌─────────────────┐
+│ · · · <span class="w">\o/</span> · · · │
+│ · · · ·<span class="w">|</span>· · · · │
+│ · · · <span class="w">/ \</span> · · · │</span>
+         <span class="b">●</span></pre>
+          <h3>Take a penalty</h3>
+          <p>Five kicks against an ASCII keeper, right in the terminal.</p>
+          <button type="button" class="go" id="playPen">Play in terminal →</button>
+        </article>
       </div>
     </section>
   </div>
