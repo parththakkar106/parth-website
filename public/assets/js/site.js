@@ -74,7 +74,7 @@
     '/about':
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
       'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
-      'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
+      'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://dnd.parth.party/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
       '<span class="d">Next: /work · /projects · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
@@ -84,7 +84,7 @@
       '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>' +
       kv('<span class="g">✓</span> EV routing backend', 'FastAPI, Dijkstra on a geospatial graph'),
     '/projects':
-      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine · branching story tree · 549 tests\n<a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
+      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine · branching story tree · 549 tests\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
       kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia · WebSockets · 31,777 questions\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
       kv('<span class="h">job-copilot/</span>', 'finds jobs daily, autofills applications, never auto-submits\n<span class="d">private repo</span>') +
       kv('<span class="h">fog-computing/</span>', 'Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>') + '\n' +
@@ -117,7 +117,7 @@
       a: 'Showdown is a real-time 1v1 trivia game at <a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>. Both players get the same question on the same 15-second clock.\n\nOne FastAPI process owns every live room; each room runs its timers as asyncio tasks over a WebSocket. Postgres (Neon) is read once at startup and written when a match ends, so play never waits on the database.' },
     { k: /d&d|dnd|dungeon|story|referee/i,
       reads: ['projects/ai-dnd.md', 'projects/ai-dnd/GUIDE.md'],
-      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. 549 backend tests.\n\n<a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">Play the demo</a>' },
+      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. 549 backend tests.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
     { k: /contact|reach|email|talk|chat|connect|linkedin/i,
       reads: ['about/contact.md'],
       a: 'Parth is always happy to talk about his work. Email <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>, or find him on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a> and <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>.' }
