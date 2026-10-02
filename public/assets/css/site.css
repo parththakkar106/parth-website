@@ -463,3 +463,14 @@ a.fact:hover { border-color: var(--fg); transform: translateY(-2px); }
 a.yr { text-decoration: none; }
 a.yr:hover { text-decoration: underline; }
 .out a.h { color: var(--t-accent); text-decoration: none; }
+
+/* themed marks in the About cards: green on the ink tile */
+.fact .ic.logo { background: var(--ink); }
+.fact .ic.logo .mark { width: 34px; height: 34px; display: block; }
+.mark .m-a { fill: var(--t-accent); }
+.mark .m-m { fill: #146b2c; }
+.mark .m-d { fill: #0f3d1d; }
+.mark .m-l { fill: #e8eee8; }
+.mark .m-ls { stroke: #e8eee8; }
+.mark .m-bg { fill: var(--ink); }
+.mark .m-bgs { stroke: var(--ink); }

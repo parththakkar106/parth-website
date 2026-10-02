@@ -74,7 +74,7 @@
     '/about':
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
       'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
-      'CS from <a href="https://www.bits-pilani.ac.in/" target="_blank" rel="noopener">BITS Pilani</a> (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
+      'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
       '<span class="d">Next: /work · /projects · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
