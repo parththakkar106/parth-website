@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parth Thakkar · parth.party</title>
+<meta name="description" content="Parth Thakkar, software engineer. Quantitative Analyst at Goldman Sachs building optimizers and LLM agents. Talk to the terminal, or switch to the plain page.">
+<meta name="theme-color" content="#131714">
+<meta property="og:title" content="Parth Thakkar · parth.party">
+<meta property="og:description" content="Software engineer building optimizers and LLM agents. Ask the terminal anything about my work.">
+<meta property="og:url" content="https://parth.party/">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/site.css">
+<script>
+  /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
+  (function () {
+    var v = null;
+    try { v = new URLSearchParams(location.search).get('view') || localStorage.getItem('pp-view'); } catch (e) {}
+    if (v === 'plain') document.documentElement.classList.add('start-plain');
+  })();
+</script>
+</head>
+<body>
+<div class="switch" role="group" aria-label="View">
+  <button type="button" id="vt" aria-pressed="true">Terminal</button>
+  <button type="button" id="vp" aria-pressed="false">Plain</button>
+</div>
+
+<!-- ================= TERMINAL ================= -->
+<main id="term" aria-label="Terminal view">
+  <div id="log" aria-live="polite">
+    <div class="welcome">
+      <div class="hi"><b>✻</b>Welcome to parth.party</div>
+      <div class="sub">/help for commands · or just ask me about Parth</div>
+      <div class="sub">cwd: ~/parth</div>
+    </div>
+    <div class="tips">
+      <div>Software engineer. Quant analyst at Goldman Sachs, building optimizers and LLM agents.</div>
+      <div>Try <span style="color:var(--t-fg)">/projects</span>, <span style="color:var(--t-fg)">/work</span>, or ask “what did Parth build with LangGraph?”</div>
+    </div>
+  </div>
+
+  <div class="inputwrap">
+    <div class="menu" id="menu" role="listbox" aria-label="Commands" hidden></div>
+    <form class="prompt" id="form" autocomplete="off">
+      <label for="cmd">&gt;</label>
+      <input id="cmd" type="text" spellcheck="false" placeholder='Try "/projects" or ask a question' aria-label="Command or question">
+    </form>
+    <div class="chips" id="chips">
+      <button type="button" data-run="/about">/about</button>
+      <button type="button" data-run="/projects">/projects</button>
+      <button type="button" data-run="/work">/work</button>
+      <button type="button" data-run="/contributions">/contributions</button>
+      <button type="button" data-run="What did Parth build at Goldman?">ask about Goldman</button>
+      <button type="button" data-run="What's the weather in Atlanta?">off-topic question</button>
+    </div>
+    <div class="status"><span>? for shortcuts · /plain for a normal page</span><span id="modelTag">model: checking…</span></div>
+  </div>
+</main>
+
+<!-- ================= PLAIN ================= -->
+<main id="plain" aria-label="Plain view" hidden>
+  <div class="col">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div>
+        <div class="hey"><span class="live" aria-hidden="true"></span>parth.party · open to SWE roles in the US</div>
+        <h1>Parth<br>Thakkar<span class="star" aria-hidden="true">✻</span></h1>
+        <p class="role">Software engineer building <b>optimizers</b> and <b>LLM agents</b>.</p>
+        <p class="lede">Quantitative Analyst at Goldman Sachs. I write the Python engine behind $600B+ of firm funding, and on the side I build things like a real-time trivia game and an AI storytelling engine.</p>
+        <div class="cta">
+          <a class="btn pri" href="assets/Parth_Thakkar_Resume.pdf" download>Download resume</a>
+          <a class="btn" href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a>
+          <a class="btn" href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="mini" aria-label="Preview of the terminal view">
+        <div class="bar"><i></i><i></i><i></i><span>~/parth — claude</span></div>
+        <div class="body">
+          <div class="q">what does Parth do?</div>
+          <div class="r t">Read<span>(about/resume.md)</span></div>
+          <div class="r">Builds the solver behind <span class="c">$600B+</span> of funding at Goldman Sachs, plus a LangGraph agent that plans it with you.</div>
+          <div class="q">and for fun? <span class="cursor" aria-hidden="true"></span></div>
+        </div>
+        <button type="button" id="openTerm">Open the terminal →</button>
+      </div>
+    </header>
+
+    <div class="stats" aria-label="Highlights">
+      <div><b>$600B<small>+</small></b><span>of firm funding run through my optimizer</span></div>
+      <div><b>90<small>%</small></b><span>faster solver runs with warm starts</span></div>
+      <div><b>~60<small>%</small></b><span>less time to build the weekly plan, via an LLM agent</span></div>
+      <div><b>74<small>%</small></b><span>lower response time from a Redis state cache</span></div>
+    </div>
+
+    <!-- 1. ABOUT -->
+    <section aria-labelledby="s-about">
+      <div class="lbl">~/about</div>
+      <div class="about">
+        <div>
+          <h2 class="sec-title" id="s-about">Engineer first, <em>quant</em> by day job.</h2>
+          <p>Computer Science graduate from <mark>BITS Pilani</mark>, now a Quantitative Analyst at <mark>Goldman Sachs</mark> building optimization systems and LLM agents for a $900B+ balance sheet. I'm looking for software engineering roles in the US.</p>
+        </div>
+        <div class="facts">
+          <div class="fact"><span class="ic" style="background:var(--sky)">GS</span><div><b>Goldman Sachs</b><span>Quantitative Analyst · since Jan 2024</span></div></div>
+          <div class="fact"><span class="ic" style="background:var(--accent)">BP</span><div><b>BITS Pilani</b><span>#1 private engineering institute in India</span></div></div>
+          <div class="fact"><span class="ic" style="background:var(--sage)">GC</span><div><b>US Green Card</b><span>No visa sponsorship required</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. EXPERIENCE -->
+    <section aria-labelledby="s-exp">
+      <div class="lbl">~/experience</div>
+      <h2 class="sec-title" id="s-exp">Systems that move <em>real money</em>.</h2>
+      <div class="tl">
+        <article class="co">
+          <header><h3>Goldman Sachs <span>· Quantitative Analyst</span></h3><time>Jan 2024 – Present</time></header>
+          <div class="work">
+            <div class="wcard">
+              <div class="k">Liability Optimizer</div>
+              <div class="big">−90%<small>solver runtime for similar runs</small></div>
+              <div class="viz"><svg viewBox="0 0 240 58" role="img" aria-label="Solver runtime before and after: down 90 percent">
+                <text x="0" y="15">before</text><rect class="m" x="46" y="6" width="190" height="12" rx="3"/>
+                <text x="0" y="41">after</text><rect class="a" x="46" y="32" width="19" height="12" rx="3"/><text x="72" y="42">warm starts · state reuse</text>
+              </svg></div>
+              <ul>
+                <li>Built the Python engine behind $600B+ of firm funding; its output drives liquidity buffer decisions reported to the Federal Reserve.</li>
+                <li>Run-diff tool cut business analysis from hours to minutes.</li>
+              </ul>
+            </div>
+            <div class="wcard">
+              <div class="k">AI Funding Planning Assistant</div>
+              <div class="big">~60%<small>less time to create a plan</small></div>
+              <div class="viz"><svg viewBox="0 0 240 92" role="img" aria-label="ReAct agent loop: reason, act with 20+ tools, observe, then a human commits">
+                <line class="sm" x1="72" y1="20" x2="166" y2="20" stroke-width="1.5"/>
+                <line class="sm" x1="198" y1="32" x2="150" y2="62" stroke-width="1.5"/>
+                <line class="sm" x1="90" y1="62" x2="42" y2="32" stroke-width="1.5"/>
+                <rect class="tw sm" x="4" y="8" width="70" height="24" rx="12" stroke-width="1.5"/><text x="39" y="24" text-anchor="middle">Reason</text>
+                <rect class="a" x="164" y="8" width="70" height="24" rx="12"/><text x="199" y="24" text-anchor="middle" style="fill:#fff">Act · 20+</text>
+                <rect class="tw sm" x="84" y="60" width="72" height="24" rx="12" stroke-width="1.5"/><text x="120" y="76" text-anchor="middle">Observe</text>
+                <text x="120" y="48" text-anchor="middle">LangGraph + Pydantic</text>
+              </svg></div>
+              <ul>
+                <li>Conversational ReAct agent that surfaces binding metrics, their drivers and week-over-week changes.</li>
+                <li>Edits the plan through a human-in-the-loop commit path.</li>
+              </ul>
+            </div>
+            <div class="wcard">
+              <div class="k">Infrastructure &amp; DevOps</div>
+              <div class="big">−74%<small>average response time</small></div>
+              <div class="viz"><svg viewBox="0 0 240 58" role="img" aria-label="Four microservices on Kubernetes, response time down 74 percent">
+                <rect class="s" x="0" y="4" width="22" height="22" rx="5"/><rect class="s" x="28" y="4" width="22" height="22" rx="5"/><rect class="s" x="56" y="4" width="22" height="22" rx="5"/><rect class="s" x="84" y="4" width="22" height="22" rx="5"/>
+                <text x="116" y="19">4+ services on k8s</text>
+                <rect class="m" x="0" y="38" width="190" height="10" rx="3"/><rect class="a" x="0" y="38" width="49" height="10" rx="3"/><text x="196" y="47">Redis</text>
+              </svg></div>
+              <ul>
+                <li>Microservices with CI/CD, logging and SSO auth.</li>
+                <li>End-to-end regression and integration test suites.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="co">
+          <header><h3>MapMyIndia <span>· Developer Intern</span></h3><time>May – Jul 2022</time></header>
+          <div class="work">
+            <div class="wcard solo">
+              <div style="display:grid;gap:10px">
+                <h4>EV navigation, shortest path first</h4>
+                <ul>
+                  <li>FastAPI backend computing optimal EV routes with Dijkstra's algorithm on a geospatial graph.</li>
+                  <li>Shipped a full-stack prototype with React and MongoDB in a team of 4.</li>
+                </ul>
+              </div>
+              <div class="viz"><svg viewBox="0 0 300 96" role="img" aria-label="Graph with the shortest EV route highlighted">
+                <g class="sl" stroke-width="2">
+                  <line x1="16" y1="64" x2="80" y2="80"/><line x1="80" y1="80" x2="146" y2="48"/><line x1="146" y1="48" x2="214" y2="78"/><line x1="214" y1="78" x2="284" y2="44"/><line x1="72" y1="20" x2="200" y2="16"/>
+                </g>
+                <g class="sa" stroke-width="3.5" stroke-linecap="round">
+                  <line x1="16" y1="64" x2="72" y2="20"/><line x1="72" y1="20" x2="146" y2="48"/><line x1="146" y1="48" x2="200" y2="16"/><line x1="200" y1="16" x2="284" y2="44"/>
+                </g>
+                <circle class="f" cx="16" cy="64" r="6"/><circle class="m" cx="80" cy="80" r="5"/><circle class="a" cx="72" cy="20" r="5"/><circle class="s" cx="146" cy="48" r="7"/><circle class="a" cx="200" cy="16" r="5"/><circle class="m" cx="214" cy="78" r="5"/><circle class="f" cx="284" cy="44" r="6"/>
+                <text x="0" y="88">start</text><text x="132" y="72">charger</text><text x="262" y="66">dest</text>
+              </svg></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 3. TECHNICAL SKILLS -->
+    <section aria-labelledby="s-skills">
+      <div class="lbl">~/skills</div>
+      <h2 class="sec-title" id="s-skills">The <em>toolbox</em>.</h2>
+      <div class="skills">
+        <div class="sk tall">
+          <h3>Programming &amp; Tools <span>daily drivers</span></h3>
+          <div class="chips2"><span class="hot">Python</span><span>Java</span><span>C/C++</span><span>SQL</span><span class="hot">FastAPI</span><span>REST APIs</span><span>Microservices</span><span>Snowflake</span><span>Pandas</span><span>NumPy</span><span class="hot">Pydantic</span><span>Git</span></div>
+        </div>
+        <div class="sk">
+          <h3>DevOps &amp; Infrastructure <span>ships it</span></h3>
+          <div class="chips2"><span class="hot">Kubernetes</span><span>ArgoCD</span><span>Docker</span><span>GitLab CI/CD</span><span>SonarQube</span><span>Linux</span></div>
+        </div>
+        <div class="sk">
+          <h3>Coursework <span>foundations</span></h3>
+          <div class="chips2"><span>Data Structures &amp; Algorithms</span><span>Operating Systems</span><span>Computer Networks</span><span>Database Systems</span><span>OOP</span><span>Logic in CS</span><span>Discrete Math</span><span>Probability &amp; Statistics</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. EDUCATION -->
+    <section aria-labelledby="s-edu">
+      <div class="lbl">~/education</div>
+      <div class="edu">
+        <svg class="gauge" viewBox="0 0 132 132" role="img" aria-label="CGPA 8.5 out of 10">
+          <circle cx="66" cy="66" r="54" fill="none" stroke="var(--line)" stroke-width="12"/>
+          <circle cx="66" cy="66" r="54" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="288.4 339.3" transform="rotate(-90 66 66)"/>
+          <text x="66" y="72" text-anchor="middle">8.5</text><text class="sm" x="66" y="90" text-anchor="middle">CGPA / 10</text>
+        </svg>
+        <div>
+          <span class="badge">Aug 2020 – Jul 2024 · Pilani, India</span>
+          <h3 id="s-edu">Birla Institute of Technology and Science, Pilani</h3>
+          <p>B.E. (Hons) in Computer Science</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PROJECTS -->
+    <section aria-labelledby="s-proj">
+      <div class="lbl">~/projects</div>
+      <h2 class="sec-title" id="s-proj">Side projects, <em>shipped</em>.</h2>
+      <div class="bento">
+        <article class="pj w4 dark">
+          <div class="top"><h3>AI D&amp;D</h3><span class="yr">2026 · public</span></div>
+          <p>An AI Dungeon-style storytelling engine on any OpenAI-compatible model. The story is a branching tree, and a Python world-state referee decides which of the model's proposed changes stick.</p>
+          <div class="viz"><svg viewBox="0 0 420 96" role="img" aria-label="Branching story tree with three takes on one turn">
+            <g class="sm" stroke-width="1.5" fill="none">
+              <path d="M30 48 H110"/><path d="M110 48 C140 48 140 18 170 18 H250"/><path d="M110 48 H250"/><path d="M110 48 C140 48 140 78 170 78 H250"/><path d="M250 48 H330"/>
+            </g>
+            <path class="sa" d="M30 48 H110 M110 48 H250 M250 48 H330" stroke-width="3" fill="none"/>
+            <circle class="f" cx="30" cy="48" r="7"/><circle class="m" cx="250" cy="18" r="6"/><circle class="a" cx="250" cy="48" r="8"/><circle class="m" cx="250" cy="78" r="6"/><circle class="a" cx="330" cy="48" r="6"/>
+            <circle class="f" cx="110" cy="48" r="6"/>
+            <rect class="tw" x="346" y="34" width="72" height="28" rx="8"/><text x="382" y="52" text-anchor="middle">‹ 2/3 ›</text>
+            <text x="14" y="76">start</text><text x="205" y="12">take 1</text><text x="205" y="94">take 3</text>
+          </svg></div>
+          <div class="foot"><span class="tag">FastAPI</span><span class="tag">React</span><span class="tag">Postgres</span><span class="tag">549 tests</span><a class="go" href="https://parththakkar106.github.io/AI-DnD/" target="_blank" rel="noopener">Play demo →</a></div>
+        </article>
+
+        <article class="pj w2 clay">
+          <div class="top"><h3>Showdown</h3><span class="yr">2026 · live</span></div>
+          <div class="vs" aria-label="Example duel score">
+            <div class="pl">YOU<b>1,250</b>3× streak</div><div class="mid">VS</div><div class="pl">RIVAL<b>900</b>15s left</div>
+          </div>
+          <p>Real-time 1v1 trivia over WebSockets. Same question, same clock, 31,777 questions, and a chaos mode for stealing points.</p>
+          <div class="foot"><span class="tag">WebSockets</span><span class="tag">asyncio</span><a class="go" href="https://showdown.parth.party/" target="_blank" rel="noopener">Play →</a></div>
+        </article>
+
+        <article class="pj w3">
+          <div class="top"><h3>Job Copilot</h3><span class="yr">2026 · private</span></div>
+          <div class="steps" aria-label="Pipeline steps"><span>find roles</span><span>fill form</span><span>ask if unsure</span><span class="you">you submit</span></div>
+          <p>Finds new early-career roles daily on Greenhouse, Lever, Ashby and Workday. A Chrome extension fills most of each application and never clicks Submit for you.</p>
+          <div class="foot"><span class="tag">Python</span><span class="tag">Chrome MV3</span><span class="tag">GitHub Actions</span></div>
+        </article>
+
+        <article class="pj w3">
+          <div class="top"><h3>Volunteer-Support Fog Computing</h3><span class="yr">2022</span></div>
+          <div class="viz"><svg viewBox="0 0 300 70" role="img" aria-label="Delay down 31 percent, energy down 79 percent, network usage down 65 percent">
+            <text x="0" y="12">delay</text><rect class="m" x="56" y="3" width="200" height="11" rx="3"/><rect class="a" x="56" y="3" width="138" height="11" rx="3"/><text x="262" y="12">−31%</text>
+            <text x="0" y="37">energy</text><rect class="m" x="56" y="28" width="200" height="11" rx="3"/><rect class="a" x="56" y="28" width="42" height="11" rx="3"/><text x="262" y="37">−79%</text>
+            <text x="0" y="62">network</text><rect class="m" x="56" y="53" width="200" height="11" rx="3"/><rect class="a" x="56" y="53" width="70" height="11" rx="3"/><text x="262" y="62">−65%</text>
+          </svg></div>
+          <p>A Java fog system across ~20 nodes with volunteer-node load distribution for delay-sensitive IoT, compared against pure cloud.</p>
+          <div class="foot"><span class="tag">Java</span><span class="tag">Networking</span></div>
+        </article>
+
+        <article class="pj w6">
+          <div class="top"><h3>Shipping, every week</h3><span class="yr">github.com/parththakkar106</span></div>
+          <div class="grid-heat"><div class="cells" id="cells"></div></div>
+          <div class="heat-cap"><span id="pTotal"></span><span>includes private repos · updated nightly</span></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 6. LEADERSHIP & AWARDS -->
+    <section aria-labelledby="s-lead">
+      <div class="lbl">~/leadership</div>
+      <h2 class="sec-title" id="s-lead">Off the keyboard.</h2>
+      <div class="awards">
+        <div class="aw"><b>3rd<small> / 400+</small></b><h4>Intern Coding Challenge</h4><span>Goldman Sachs, across India</span><span class="yr">2023</span></div>
+        <div class="aw"><b>10,000<small>+</small></b><h4>Scheduling Head, BOSM</h4><span>Department of Controls for India's largest student-run sports fest</span><span class="yr">2020 – 2024</span></div>
+        <div class="aw"><b>200<small>+</small></b><h4>Microsoft Learn Student Ambassadors</h4><span>Built scavenger-hunt problems and quizzes for the Competitive Coding SIG</span><span class="yr">2022 – 2023</span></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CONTACT -->
+  <section class="contact" aria-labelledby="s-contact" style="margin-top:96px">
+    <div class="in">
+      <div class="lbl" style="color:#5fd38f">~/contact</div>
+      <h2 id="s-contact">Let's build<br>something<span>.</span></h2>
+      <p>Hiring for software engineering in the US? I'd love to hear about it. Green Card holder, no sponsorship needed.</p>
+      <div class="row">
+        <button type="button" class="btn pri" id="copyMail">thakkarparth106@gmail.com</button>
+        <a class="btn" href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="assets/Parth_Thakkar_Resume.pdf" download>Resume PDF</a>
+      </div>
+      <small>© 2026 Parth Thakkar · parth.party · built with Claude Code</small>
+    </div>
+  </section>
+</main>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
