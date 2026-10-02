@@ -233,78 +233,125 @@
     }).then(function () { busy = false; focusInput(); });
   }
 
-  /* ---------- /penalty: a five-kick shootout against an ASCII keeper ---------- */
-  // Goal is 25 columns inside the posts; the three aim zones sit at these columns.
-  var ZX = [4, 12, 20], GW = 25, KICKS = 5;
-  // Power bar: 20 cells. weak → always saved, good → keeper guesses, top bins → unstoppable, over → misses.
-  var BAR = 20, ZONE = function (i) { return i < 7 ? 0 : i < 15 ? 1 : i < 17 ? 2 : 3; };
+  /* ---------- /penalty: a five-kick shootout, drawn as a small SVG pitch ---------- */
+  // Board is a 320×170 SVG. Goal mouth runs x 40–280 between the crossbar (y 30) and the goal line (y 110).
+  var KICKS = 5, AIMX = [86, 160, 234];
+  // Power is 0–1 along the bar: weak → always saved, good → keeper guesses, top corner → unstoppable, over → misses.
+  var P_WEAK = .35, P_GOOD = .75, P_TOP = .86;
+  function zoneOf(v) { return v < P_WEAK ? 0 : v < P_GOOD ? 1 : v < P_TOP ? 2 : 3; }
   var pen = null;
+
+  function boardSvg() {
+    var net = '';
+    for (var x = 52; x < 280; x += 12) net += '<line x1="' + x + '" y1="31" x2="' + x + '" y2="110"/>';
+    for (var y = 42; y < 110; y += 12) net += '<line x1="41" y1="' + y + '" x2="279" y2="' + y + '"/>';
+    return '<svg viewBox="0 0 320 170" role="img" aria-label="Penalty: goal, keeper and ball">' +
+      '<g class="pk-net">' + net + '</g>' +
+      '<path class="pk-line" d="M0 110 H320 M110 110 L96 166 M210 110 L224 166"/>' +
+      '<path class="pk-frame" d="M40 110 V30 H280 V110"/>' +
+      '<circle class="pk-spot" cx="160" cy="150" r="2"/>' +
+      '<g class="pk-aim"><circle r="9"/><path d="M-14 0 H-5 M5 0 H14 M0 -14 V-5 M0 5 V14"/></g>' +
+      '<g class="pk-kp"><circle cx="0" cy="-50" r="5.5"/><path d="M0 -44 V-22 M-15 -56 L0 -40 L15 -56 M0 -22 L-9 0 M0 -22 L9 0"/></g>' +
+      '<circle class="pk-ball" r="6"/>' +
+      '</svg>';
+  }
 
   function penalty() {
     var b = el('block pk', ''); log.appendChild(b);
-    var head = el('out', '<span class="h">Penalty shootout</span> <span class="d">· ' + KICKS + ' kicks · stop the power bar in the green, the bright cells are the top corner</span>');
-    var board = el('out pk-board', ''), msg = el('out pk-msg', ''), ctl = el('pk-ctl', '');
-    ctl.innerHTML = '<button type="button" data-a="0" aria-label="Aim left">◀ left</button><button type="button" data-a="1" aria-label="Aim middle">▲ middle</button><button type="button" data-a="2" aria-label="Aim right">right ▶</button><button type="button" class="shoot" data-a="s">SHOOT</button><button type="button" class="quit" data-a="q" aria-label="Quit">esc</button>';
+    var head = el('out', '<span class="h">Penalty shootout</span> <span class="d">· ' + KICKS + ' kicks · stop the bar in the green · the bright strip is the top corner</span>');
+    var board = el('out pk-board', boardSvg() +
+      '<div class="pk-bar" aria-hidden="true"><i class="z0"></i><i class="z1"></i><i class="z2"></i><i class="z3"></i><b></b></div>' +
+      '<div class="pk-score"></div>');
+    var msg = el('out pk-msg', ''), ctl = el('pk-ctl', '');
+    ctl.innerHTML = '<button type="button" data-a="0">◀ left</button><button type="button" data-a="1">▲ middle</button><button type="button" data-a="2">right ▶</button><button type="button" class="shoot" data-a="s">SHOOT</button><button type="button" class="quit" data-a="q">esc</button>';
     var hint = el('out pk-hint d', '←/↑/→ or 1/2/3 to aim · space to shoot · esc to quit');
     [head, board, msg, ctl, hint].forEach(function (n) { b.appendChild(n); });
-    pen = { b: b, board: board, msg: msg, ctl: ctl, hint: hint, aim: 1, kick: 0, res: [], phase: 'aim', t0: performance.now(), pw: 0, raf: 0, ball: null, keeper: 1, dive: false };
+    var q = function (s) { return board.querySelector(s); };
+    pen = { b: b, msg: msg, ctl: ctl, hint: hint, svg: q('svg'), aimG: q('.pk-aim'), kp: q('.pk-kp'), ball: q('.pk-ball'), net: q('.pk-net'),
+            bar: q('.pk-bar'), needle: q('.pk-bar b'), score: q('.pk-score'),
+            aim: 1, kick: 0, res: [], phase: 'aim', t0: performance.now(), raf: 0 };
     busy = true; input.disabled = true; input.blur(); input.placeholder = 'playing /penalty · esc to quit';
-    ctl.addEventListener('click', function (e) {
+    // pointerdown, not click: the shot registers the instant the finger or button goes down
+    ctl.addEventListener('pointerdown', function (e) {
       var t = e.target.closest('button'); if (!t) return;
-      var a = t.dataset.a; t.blur();
+      e.preventDefault();
+      var a = t.dataset.a;
       if (a === 's') shoot(); else if (a === 'q') endPen(true); else setAim(+a);
     });
+    ctl.addEventListener('click', function (e) { if (e.detail === 0) { var t = e.target.closest('button'); if (t && t.dataset.a === 's') shoot(); } }); // keyboard-activated buttons
     document.body.classList.add('pk-on');
-    drawPen();
+    resetKick();
     pen.raf = requestAnimationFrame(tick);
     window.scrollTo(0, document.documentElement.scrollHeight);
   }
 
-  function setAim(a) { if (pen && pen.phase === 'aim') { pen.aim = a; drawPen(); } }
+  // One full sweep up and back takes this long; a touch quicker each kick, never frantic.
+  function period() { return 2600 - pen.kick * 150; }
+  function powerAt(t) { var x = ((t - pen.t0) % period()) / period(); return x < .5 ? x * 2 : 2 - x * 2; }
+
+  function place(node, x, y, extra) { node.setAttribute('transform', 'translate(' + x + ' ' + y + ')' + (extra || '')); }
+
+  function resetKick() {
+    pen.phase = 'aim'; pen.aim = 1; pen.t0 = performance.now();
+    pen.bar.classList.remove('locked'); pen.net.classList.remove('hit');
+    pen.aimG.style.display = '';
+    place(pen.kp, 160, 110); place(pen.ball, 160, 150); pen.ball.setAttribute('r', 6); pen.ball.style.opacity = 1;
+    setAim(1); drawScore();
+  }
+
+  function setAim(a) { if (pen && pen.phase === 'aim') { pen.aim = a; place(pen.aimG, AIMX[a], 44); } }
 
   function tick(t) {
     if (!pen) return;
     pen.raf = requestAnimationFrame(tick);
-    if (pen.phase !== 'aim') return;
-    var period = Math.max(700, 1500 - pen.kick * 160); // a little quicker every kick
-    var x = ((t - pen.t0) % period) / period;
-    pen.pw = Math.min(BAR - 1, Math.floor((x < .5 ? x * 2 : 2 - x * 2) * BAR));
-    drawPen();
+    if (pen.phase === 'aim') pen.needle.style.left = (powerAt(t) * 100) + '%';
+  }
+
+  function drawScore() {
+    pen.score.innerHTML = '<span class="d">kick ' + Math.min(pen.kick + 1, KICKS) + '/' + KICKS + '</span>  ' + dots(pen.res);
   }
 
   function shoot() {
     if (!pen || pen.phase !== 'aim') return;
+    // lock power at the exact moment of the press, not at the last drawn frame
+    var v = powerAt(performance.now());
     pen.phase = 'fly';
-    var z = ZONE(pen.pw), aim = pen.aim;
-    var guess = Math.floor(Math.random() * 3);
-    var goal, line;
+    pen.needle.style.left = (v * 100) + '%';
+    pen.bar.classList.add('locked');
+    pen.aimG.style.display = 'none';
+    var z = zoneOf(v), aim = pen.aim, guess = Math.floor(Math.random() * 3), goal, line;
     if (z === 0) { goal = false; guess = aim; line = 'Saved. Too soft, the keeper just collects it.'; }
     else if (z === 3) { goal = false; line = 'Over the bar. Into row Z.'; }
-    else if (z === 2) { goal = true; line = guess === aim ? 'GOAL! Right in the top corner, the keeper got a glove on it and it still went in.' : 'GOAL! Top bins, no chance.'; }
+    else if (z === 2) { goal = true; line = guess === aim ? 'GOAL! Top corner. The keeper got a glove on it and it still went in.' : 'GOAL! Top bins, no chance.'; }
     else if (guess === aim) { goal = false; line = 'Saved! The keeper guessed right.'; }
     else { goal = true; line = ['GOAL! Sent the keeper the wrong way.', 'GOAL! Cool as you like.', 'GOAL! Bottom of the net.'][Math.floor(Math.random() * 3)]; }
-    // ball flies from the spot (row 8) to its end row: 0 over the bar, 2 top corner, 4 otherwise
-    var endRow = z === 3 ? 0 : z === 2 ? 2 : 4, endCol = ZX[aim] + 2, steps = 4, i = 0;
-    pen.keeper = guess;
-    (function fly() {
+
+    // where the ball ends up, and how the keeper moves
+    var bx = AIMX[aim], by = z === 3 ? 8 : z === 2 ? 42 : 82;
+    if (!goal && z !== 3) { by = guess === 1 ? 72 : 88; } // into the keeper's hands
+    var kx = guess === 1 ? 160 : AIMX[guess] + (guess === 0 ? 14 : -14);
+    var rot = guess === 0 ? -72 : guess === 2 ? 72 : 0, ky = guess === 1 ? 104 : 104;
+    var T = 520, start = performance.now();
+    (function fly(now) {
       if (!pen) return;
-      i++;
-      var f = i / steps;
-      pen.ball = [Math.round(8 + (endRow - 8) * f), Math.round(14 + (endCol - 14) * f)];
-      pen.dive = i >= 2;
-      drawPen();
-      if (i < steps) return setTimeout(fly, 90);
+      var t = Math.min(1, (now - start) / T), e = 1 - Math.pow(1 - t, 3);
+      place(pen.ball, 160 + (bx - 160) * e, 150 + (by - 150) * e - Math.sin(Math.PI * e) * (z === 3 ? 30 : 14));
+      pen.ball.setAttribute('r', (6 - 2 * e).toFixed(2));
+      if (z === 3 && t > .85) pen.ball.style.opacity = (1 - t) / .15;
+      var k = Math.max(0, Math.min(1, (t - .12) / .7)), ke = 1 - Math.pow(1 - k, 2);
+      place(pen.kp, 160 + (kx - 160) * ke, 110 + (ky - 110) * ke - (guess === 1 ? 10 * Math.sin(Math.PI * k) : 0), ' rotate(' + (rot * ke).toFixed(1) + ')');
+      if (t < 1) return requestAnimationFrame(fly);
       pen.res.push(goal);
-      follow(function () { pen.msg.innerHTML = (goal ? '<span class="h">' : '<span class="pk-miss">') + esc(line) + '</span>'; });
-      drawPen();
+      if (goal) pen.net.classList.add('hit');
+      follow(function () { pen.msg.innerHTML = (goal ? '<span class="h">' : '<span class="pk-miss">') + esc(line) + '</span>'; drawScore(); });
       setTimeout(function () {
         if (!pen) return;
         pen.kick++;
         if (pen.kick >= KICKS) return endPen(false);
-        pen.phase = 'aim'; pen.ball = null; pen.dive = false; pen.keeper = 1; pen.aim = 1; pen.t0 = performance.now();
         pen.msg.innerHTML = '';
-      }, 1300);
-    })();
+        resetKick();
+      }, 1400);
+    })(start);
   }
 
   function dots(res) {
@@ -313,42 +360,11 @@
     return out.join(' ');
   }
 
-  function drawPen() {
-    var W = GW + 4, rows = [], r, c;
-    for (r = 0; r < 9; r++) { rows.push([]); for (c = 0; c < W; c++) rows[r].push([' ', '']); }
-    function put(r, c, str, cls) { for (var k = 0; k < str.length; k++) if (c + k >= 0 && c + k < W) rows[r][c + k] = [str[k], cls]; }
-    // frame: crossbar on row 1, posts down to row 5, net dots inside
-    put(1, 1, '┌' + Array(GW + 1).join('─') + '┐', 'pk-post');
-    for (r = 2; r <= 5; r++) {
-      put(r, 1, '│', 'pk-post'); put(r, GW + 2, '│', 'pk-post');
-      for (c = 0; c < GW; c++) if ((c + r) % 2 === 0) put(r, c + 2, '·', 'pk-net');
-    }
-    put(6, 0, Array(W + 1).join('‾'), 'pk-dim');
-    // aim marker while aiming
-    if (pen.phase === 'aim') put(2, ZX[pen.aim] + 2, '×', 'h');
-    // keeper: stands in the middle, dives at the guess once the ball is on its way
-    var kx = ZX[1] + 1;
-    if (!pen.dive) { put(3, kx, '\\o/', 'pk-kp'); put(4, kx + 1, '|', 'pk-kp'); put(5, kx, '/ \\', 'pk-kp'); }
-    else if (pen.keeper === 1) { put(2, kx, '\\o/', 'pk-kp'); put(3, kx + 1, '|', 'pk-kp'); put(4, kx, '/ \\', 'pk-kp'); }
-    else if (pen.keeper === 0) put(4, ZX[0] + 1, 'o==<', 'pk-kp');
-    else put(4, ZX[2] + 1, '>==o', 'pk-kp');
-    // ball on the spot, or in flight
-    var ball = pen.ball || [8, 14];
-    put(ball[0], ball[1], '●', 'h');
-    var html = rows.map(function (row) {
-      return row.map(function (p) { return p[1] ? '<span class="' + p[1] + '">' + esc(p[0]) + '</span>' : esc(p[0]); }).join('');
-    }).join('\n');
-    pen.board.innerHTML = '<pre>' + html + '</pre>';
-    var bar = '';
-    for (var i = 0; i < BAR; i++) bar += '<span class="pw' + ZONE(i) + (i <= pen.pw ? ' on' : '') + '">' + (i <= pen.pw ? '■' : '□') + '</span>';
-    pen.board.innerHTML += '<div class="pk-row"><span class="d">power </span>' + bar + '</div>' +
-      '<div class="pk-row"><span class="d">kick ' + Math.min(pen.kick + 1, KICKS) + '/' + KICKS + '  </span>' + dots(pen.res) + '</div>';
-  }
-
   function endPen(quit) {
     if (!pen) return;
     var p = pen; pen = null;
     cancelAnimationFrame(p.raf);
+    if (!quit) p.score.innerHTML = '<span class="d">final</span>  ' + dots(p.res);
     p.ctl.remove(); p.hint.remove();
     var n = p.res.filter(Boolean).length, best = 0;
     if (!quit) {
@@ -367,7 +383,7 @@
   }
 
   document.addEventListener('keydown', function (e) {
-    if (!pen || term.hidden) return;
+    if (!pen || term.hidden || e.repeat) return;
     var k = e.key, a = { ArrowLeft: 0, ArrowUp: 1, ArrowRight: 2, '1': 0, '2': 1, '3': 2 }[k];
     if (a !== undefined) setAim(a);
     else if (k === ' ' || k === 'Enter') shoot();
