@@ -1,9 +1,10 @@
 (function () {
   /* ---------- GitHub contributions (public/data/contributions.json, refreshed nightly) ---------- */
+  var WEEKS_SHOWN = 13; // rolling ~3 months
   var weeks = [], total = 0, sample = true, updated = '';
   function level(n) { return n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : n < 9 ? 3 : 4; }
   function heatCaption() {
-    return total.toLocaleString() + ' contributions in the last year' + (sample ? ' (sample data)' : '');
+    return total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '');
   }
   function renderCells() {
     var cells = document.getElementById('cells');
@@ -12,10 +13,18 @@
       wk.forEach(function (n) { var i = document.createElement('i'); var l = level(n); if (l) i.className = 'l' + l; i.title = n + ' contributions'; cells.appendChild(i); });
     });
     document.getElementById('pTotal').textContent = heatCaption();
+    var flat = [].concat.apply([], weeks), active = 0, best = 0, streak = 0;
+    flat.forEach(function (n) { if (n > 0) active++; if (n > best) best = n; });
+    for (var i = flat.length - 1; i >= 0 && flat[i] > 0; i--) streak++;
+    if (!streak && flat.length > 1) for (var j = flat.length - 2; j >= 0 && flat[j] > 0; j--) streak++; // today may not have a commit yet
+    document.getElementById('heatStats').innerHTML =
+      '<div><dt>Active days</dt><dd>' + active + '<small> / ' + flat.length + '</small></dd></div>' +
+      '<div><dt>Busiest day</dt><dd>' + best + '</dd></div>' +
+      '<div><dt>Current streak</dt><dd>' + streak + '<small> days</small></dd></div>';
   }
   fetch('data/contributions.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (d) { weeks = d.weeks || []; total = d.total || 0; sample = !!d.sample; updated = d.updated || ''; renderCells(); })
+    .then(function (d) { weeks = (d.weeks || []).slice(-WEEKS_SHOWN); total = weeks.reduce(function (a, wk) { return a + wk.reduce(function (x, y) { return x + y; }, 0); }, 0); sample = !!d.sample; updated = d.updated || ''; renderCells(); })
     .catch(function () { document.getElementById('pTotal').textContent = 'Contribution data is unavailable right now.'; });
 
   // terminal heatmap as block characters
@@ -41,7 +50,7 @@
     ['/about', 'Who Parth is, in four lines'],
     ['/work', 'Experience at Goldman Sachs and MapMyIndia'],
     ['/projects', 'AI D&D, Showdown, Job Copilot and more'],
-    ['/contributions', 'GitHub activity, last 12 months'],
+    ['/contributions', 'GitHub activity, last 3 months'],
     ['/resume', 'Download the resume PDF'],
     ['/contact', 'Email, GitHub, LinkedIn'],
     ['/plain', 'Switch to the plain page'],
@@ -118,7 +127,7 @@
     if (cmd === '/plain') { setView('plain'); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
-      b.appendChild(el('out', '<span class="h">github.com/parththakkar106</span> <span class="d">· ' + total.toLocaleString() + ' contributions in the last year' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
+      b.appendChild(el('out', '<span class="h">github.com/parththakkar106</span> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
       var h = el('heat', '<pre>' + asciiHeat() + '</pre>'); b.appendChild(h);
       b.appendChild(el('out', '<span class="d">less </span><span class="h0">·</span><span class="h1">░</span><span class="h2">▒</span><span class="h3">▓</span><span class="h4">█</span><span class="d"> more</span>'));
     }
