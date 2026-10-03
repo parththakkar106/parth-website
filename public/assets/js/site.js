@@ -243,6 +243,16 @@
     fbReq.catch(function () { fbReq = null; }); // a failed fetch can be retried by the next /latest
     return fbReq;
   }
+  // Draws this visitor's last copy straight away (if any), then again once fresh data arrives.
+  function fbLoad(draw, fail) {
+    var old = null;
+    try { old = JSON.parse(localStorage.getItem('pp-football')); } catch (e) {}
+    if (old && old.barca) draw(old); else old = null;
+    football().then(function (d) {
+      try { localStorage.setItem('pp-football', JSON.stringify(d)); } catch (e) {}
+      draw(d);
+    }, function () { if (!old) fail(); });
+  }
   function fbDay(iso) { return new Date(iso).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }); }
   function fbTime(iso) { return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
   function fbIn(iso) {
@@ -258,18 +268,19 @@
   // "vs Getafe" for Barça; Messi's lines name the team too: "Argentina vs Bolivia", "Inter Miami at Columbus".
   function fbVs(m, named) { return (named ? esc(String(m.team)) + ' ' : '') + (m.atHome ? 'vs ' : 'at ') + esc(String(m.opponent)); }
   // [tag, headline, detail, result] for the live, last and next match of one feed
+  var CREST = { 'Argentina': 'argentina', 'Inter Miami': 'inter-miami', 'Inter Miami CF': 'inter-miami' };
   function fbLines(f, named) {
     if (!f) return [];
     var out = [];
-    if (f.live) out.push(['live', fbScore(f.live) + ' ' + fbVs(f.live, named), esc(f.live.detail || '') + ' · ' + esc(f.live.comp)]);
-    if (f.last) out.push(['last', fbScore(f.last) + ' ' + fbVs(f.last, named), esc(f.last.comp) + ' · ' + fbDay(f.last.date), f.last.result, f.last.link]);
-    if (f.next && !f.live) out.push(['next', fbVs(f.next, named), esc(f.next.comp) + ' · ' + fbDay(f.next.date) + ', ' + fbTime(f.next.date) + ' · ' + fbIn(f.next.date)]);
+    if (f.live) out.push(['live', fbScore(f.live) + ' ' + fbVs(f.live, named), esc(f.live.detail || '') + ' · ' + esc(f.live.comp), null, f.live.link, CREST[f.live.team]]);
+    if (f.last) out.push(['last', fbScore(f.last) + ' ' + fbVs(f.last, named), esc(f.last.comp) + ' · ' + fbDay(f.last.date), f.last.result, f.last.link, CREST[f.last.team]]);
+    if (f.next && !f.live) out.push(['next', fbVs(f.next, named), esc(f.next.comp) + ' · ' + fbDay(f.next.date) + ', ' + fbTime(f.next.date) + ' · ' + fbIn(f.next.date), null, null, CREST[f.next.team]]);
     return out;
   }
 
   function latest(b) {
     var out = el('out', '<span class="d">Fetching the fixtures…</span>'); b.appendChild(out);
-    football().then(function (d) {
+    fbLoad(function (d) {
       var rcls = { W: 'g', L: 'pk-miss', D: 'd' };
       function rows(lines) {
         return lines.length ? lines.map(function (l) {
@@ -293,12 +304,13 @@
     function fill(ul, f, named) {
       var lines = fbLines(f, named);
       ul.innerHTML = !f ? '<li class="fb-msg">Feed unavailable right now.</li>' : !lines.length ? '<li class="fb-msg">Nothing scheduled right now.</li>' : lines.map(function (l) {
-        var head = (l[3] ? '<span class="r ' + l[3] + '">' + l[3] + '</span>' : '') + l[1];
+        var crest = named && l[5] ? '<img class="fb-crest" src="assets/img/crests/' + l[5] + '.png" alt="">' : '';
+        var head = (l[3] ? '<span class="r ' + l[3] + '">' + l[3] + '</span>' : '') + crest + l[1];
         return '<li><span class="tag ' + l[0] + '">' + l[0] + '</span><span><b>' + (l[4] ? '<a href="' + esc(l[4]) + '" target="_blank" rel="noopener">' + head + '</a>' : head) + '</b><small>' + l[2] + '</small></span></li>';
       }).join('');
     }
-    football().then(function (d) {
-      if (d.barca.standing) document.getElementById('fbStand').textContent = '· ' + d.barca.standing;
+    fbLoad(function (d) {
+      if (d.barca.standing) document.getElementById('fbStand').textContent = d.barca.standing;
       fill(bl, d.barca); fill(ml, d.messi, true);
     }, function () { fill(bl, null); fill(ml, null); });
   })();
