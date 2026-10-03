@@ -14,6 +14,7 @@ function side(c) {
   return {
     id: c.team.id,
     name: c.team.shortDisplayName || c.team.displayName,
+    full: (c.team.displayName || '').replace(/ (CF|FC)$/, ''),
     abbr: c.team.abbreviation,
     score: score.displayValue ?? null,
     pens: score.shootoutScore ?? c.shootoutScore ?? null,
@@ -36,7 +37,7 @@ function match(e, ids) {
     detail: st.shortDetail,
     home: h, away: a,
     atHome: us === h,
-    team: us.name,
+    team: us.full || us.name,
     opponent: them.name,
     result: st.state !== 'post' ? null : us.winner ? 'W' : them.winner ? 'L' : 'D',
     venue: c.venue?.fullName || null,
@@ -66,15 +67,34 @@ async function build() {
   return { barca, messi, updated: new Date().toISOString() };
 }
 
+// Stale-while-revalidate: the edge keeps the last good copy for a day and always answers from it
+// straight away. Once it is older than 10 minutes (1 while a match is live) the next request also
+// refreshes it in the background, so visitors never wait on ESPN unless this edge has no copy at all.
+const KEEP = 86400;
+const fresh = data => ((data.barca?.live || data.messi?.live) ? 60 : 600) * 1000;
+const send = (body, cache) => new Response(body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': cache } });
+
+async function refresh(cache, key) {
+  const data = await build();
+  const body = JSON.stringify(data);
+  await cache.put(key, send(body, `public, max-age=${KEEP}`));
+  return { data, body };
+}
+
 export async function onRequestGet({ request, waitUntil }) {
   const cache = caches.default, key = new Request(new URL('/api/football', request.url).toString());
   const hit = await cache.match(key);
-  if (hit) return hit;
-  let data;
-  try { data = await build(); } catch { return Response.json({ error: 'unavailable' }, { status: 502, headers: { 'Cache-Control': 'no-store' } }); }
-  // Refresh every minute during a match, otherwise every 10.
-  const live = data.barca.live || data.messi?.live;
-  const res = Response.json(data, { headers: { 'Cache-Control': `public, max-age=${live ? 60 : 600}` } });
-  waitUntil(cache.put(key, res.clone()));
-  return res;
+  if (hit) {
+    const body = await hit.text();
+    let data = null;
+    try { data = JSON.parse(body); } catch {}
+    if (data && Date.now() - Date.parse(data.updated) > fresh(data)) waitUntil(refresh(cache, key).catch(() => {}));
+    if (data) return send(body, 'public, max-age=60');
+  }
+  try {
+    const { body } = await refresh(cache, key);
+    return send(body, 'public, max-age=60');
+  } catch {
+    return Response.json({ error: 'unavailable' }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
+  }
 }
