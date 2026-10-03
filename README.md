@@ -39,6 +39,12 @@ tokens. Also add a Cloudflare **rate limiting rule** for `/api/chat` (Security â
 
 When the resume or projects change, update `functions/api/_knowledge.js` along with the page.
 
+## Changing CSS or JS
+
+Cloudflare lets browsers keep files under `assets/` for up to 4 hours, so `index.html` loads them with a
+content hash (`site.js?v=â€¦`). After editing `site.css` or `site.js`, run `node scripts/stamp-assets.mjs` and commit
+the updated `index.html`, or visitors may keep the old version for a few hours.
+
 ## Contributions heatmap
 
 `public/data/contributions.json` currently holds **sample data** (`"sample": true`), so the page says so.
