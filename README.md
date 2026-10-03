@@ -17,6 +17,7 @@ public/                     the site (Cloudflare Pages serves this folder)
   data/contributions.json   GitHub contribution calendar, refreshed nightly
 functions/api/chat.js       POST /api/chat streams the model's answer; GET reports whether it is live
 functions/api/_knowledge.js the only facts the model may use, plus its rules
+functions/api/barca.js      GET /api/barca: FC Barcelona results and fixtures from ESPN, edge-cached 10 min (1 min while live)
 scripts/fetch-contributions.mjs
 .github/workflows/contributions.yml
 ```
