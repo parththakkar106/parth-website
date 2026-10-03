@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=bd58f5bc0c">
+<link rel="stylesheet" href="assets/css/site.css?v=3c46da33ba">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
   (function () {
@@ -58,6 +58,7 @@
       <button type="button" data-run="/projects">/projects</button>
       <button type="button" data-run="/work">/work</button>
       <button type="button" data-run="/contributions">/contributions</button>
+      <button type="button" data-run="/latest">/latest</button>
       <button type="button" data-run="/penalty">/penalty ⚽</button>
       <button type="button" data-run="What did Parth build at Goldman?">ask about Goldman</button>
       <button type="button" data-run="What's the weather in Atlanta?">off-topic question</button>
@@ -313,7 +314,7 @@
           <div class="k">Football</div>
           <div class="ten" aria-hidden="true">10</div>
           <h3>Watching football</h3>
-          <p>I watch a lot of it, and I'm a Messi fan through and through.</p>
+          <p>I watch a lot of it, follow Barça, and I'm a Messi fan through and through.</p>
         </article>
         <article class="lk">
           <div class="k">Video games</div>
@@ -329,6 +330,26 @@
           <button type="button" class="go" id="playPen">Play in terminal →</button>
         </article>
       </div>
+    </section>
+
+    <!-- 8. LATEST: live Barça results and fixtures from /api/barca -->
+    <section aria-labelledby="s-latest">
+      <div class="lbl">~/latest</div>
+      <h2 class="sec-title" id="s-latest">What I'm <em>following</em>.</h2>
+      <article class="bc" id="barca" aria-live="polite">
+        <header>
+          <div class="k">Football · FC Barcelona</div>
+          <span class="bc-table" id="bcTable"></span>
+        </header>
+        <div class="bc-grid">
+          <div class="bc-next" id="bcNext"><p class="bc-msg">Loading Barça's fixtures…</p></div>
+          <div class="bc-past">
+            <div class="k">Last results</div>
+            <ol id="bcPast"></ol>
+          </div>
+        </div>
+        <small class="bc-src">Live from ESPN · times in your timezone · also in the terminal as <code>/latest</code></small>
+      </article>
     </section>
   </div>
 
@@ -349,6 +370,6 @@
     </div>
   </section>
 </main>
-<script src="assets/js/site.js?v=73a45f0024"></script>
+<script src="assets/js/site.js?v=4d55b7b329"></script>
 </body>
 </html>
