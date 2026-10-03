@@ -341,7 +341,7 @@
     resetPitch();
     pen.kicker.style.display = 'none'; pen.aimG.style.display = '';
     pen.bar.classList.remove('clock');
-    banner(roundName() + ' · YOU SHOOT', 'aim, then stop the bar in the green', true);
+    banner(roundName() + ' · YOU SHOOT', '', true);
     setButtons(['◀ left', '▲ middle', 'right ▶'], true, '←/↑/→ or 1/2/3 to aim · space to shoot · esc to quit');
     setAim(1);
   }
@@ -374,7 +374,7 @@
     resetPitch();
     pen.aimG.style.display = 'none'; pen.kicker.style.display = ''; pen.kicker.style.opacity = 1;
     pen.bar.classList.add('clock');
-    banner(roundName() + ' · YOU SAVE', 'dive when the bar reaches the green', false);
+    banner(roundName() + ' · YOU SAVE', '', false);
     setButtons(['◀ dive left', '▲ stay', 'dive right ▶'], false, '←/↑/→ or 1/2/3 to dive · esc to quit');
   }
 
@@ -382,7 +382,6 @@
     if (!pen || pen.phase !== 'save' || pen.dive !== null) return;
     pen.dive = z;
     pen.early = (performance.now() - pen.t0) / RUNUP < WINDOW;
-    pen.bannerS.textContent = (pen.early ? 'too early! ' : '') + (z === 1 ? 'you stay in the middle' : 'you dive ' + SIDE[z]);
     tween(260, function (t) { keeperPose(z, 1 - Math.pow(1 - t, 2), false); });
   }
 
@@ -478,6 +477,38 @@
     p.score.innerHTML = row('you', p.me, true) + '\n' + row('cpu', p.cpu, false);
   }
 
+  // Full-time art: a trophy with twinkling stars for a win, a sad face with falling rain for a loss.
+  var PEN_ART = {
+    win: [
+      ['  *   .   *   .   *', '  .   *   .   *   .'],
+      '    .-=========-.\n' +
+      '    |  WINNER!  |\n' +
+      '   (|   {{S}}   |)\n' +
+      "    '.         .'\n" +
+      "      '-.___.-'\n" +
+      '        _|_|_\n' +
+      '       [_____]'
+    ],
+    lose: [
+      ["   '   ,   '   ,", "   ,   '   ,   '"],
+      '      .-----.\n' +
+      '     /  x x  \\\n' +
+      '    |    ^    |\n' +
+      "     \\ .---. /\n" +
+      "      '-----'\n" +
+      '   CPU wins {{S}}'
+    ],
+    draw: [['', ''], '   \\_(o_o)_/\n   level {{S}}']
+  };
+  function penArt(node, kind, score) {
+    if (kind === 'win') while (score.length < 5) score = score.length % 2 ? ' ' + score : score + ' '; // keep the trophy's sides lined up
+    var a = PEN_ART[kind], body = esc(a[1].replace('{{S}}', score)), i = 0;
+    (function frame() {
+      node.innerHTML = '<span class="' + (kind === 'win' ? 'h' : 'pk-miss') + '">' + esc(a[0][i % 2]) + '</span>\n' + body;
+      if (++i < 12 && node.isConnected) setTimeout(frame, 280);
+    })();
+  }
+
   function endPen(quit) {
     if (!pen) return;
     var p = pen; pen = null; penEndedAt = Date.now();
@@ -488,12 +519,13 @@
     if (!quit && m > c) {
       try { wins = (+localStorage.getItem('pp-pen-wins') || 0) + 1; localStorage.setItem('pp-pen-wins', wins); } catch (e) { wins = 1; }
     }
-    p.bannerB.textContent = quit ? 'ABANDONED' : 'FULL TIME'; p.bannerS.textContent = m + '–' + c;
+    p.bannerB.textContent = (quit ? 'ABANDONED' : 'FULL TIME') + ' · ' + m + '–' + c;
     var text = quit ? 'Shootout abandoned at ' + m + '–' + c + '.'
       : m > c ? (p.me.every(Boolean) ? 'You win ' + m + '–' + c + ' without missing. Messi would be proud.' : 'You win ' + m + '–' + c + '.')
       : c > m ? 'The CPU wins ' + c + '–' + m + '.'
       : 'Still level at ' + m + '–' + c + ' after ' + MAX_ROUNDS + ' rounds. Call it a draw.';
-    p.msg.innerHTML = '<span class="h">' + text + '</span>' + (wins ? '  <span class="d">shootouts won: ' + wins + '</span>' : '') +
+    if (!quit) { var art = el('out pk-art', ''); p.b.insertBefore(art, p.msg); penArt(art, m > c ? 'win' : c > m ? 'lose' : 'draw', m > c ? m + '-' + c : c + '-' + m); }
+    p.msg.innerHTML = '<span class="' + (!quit && c > m ? 'pk-miss' : 'h') + '">' + text + '</span>' + (wins ? '  <span class="d">shootouts won: ' + wins + '</span>' : '') +
       '\n<span class="d">Run /penalty for a rematch.</span>';
     busy = false; input.disabled = false; input.placeholder = 'Ask anything, or type /help';
     document.body.classList.remove('pk-on');
