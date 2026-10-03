@@ -41,7 +41,7 @@ This website (parth.party): a terminal-style portfolio with a plain view, hosted
 - Microsoft Learn Student Ambassadors, Competitive Coding SIG, BITS Pilani (2022 to 2023): created online scavenger hunt problems and quizzes for 200+ participants for the annual technical festival.
 
 ## Interests outside work
-- Watches a lot of football, follows FC Barcelona, and is a big Lionel Messi fan. The site's /latest command shows Barça's latest results and upcoming fixtures live.
+- Watches a lot of football, follows FC Barcelona, and is a big Lionel Messi fan. The site's /latest command shows the latest result and next match for Barça and for Messi's teams (Inter Miami, Argentina), live.
 - Plays video games, for example FIFA, Split Fiction, GTA and Watch Dogs.
 - The terminal has a penalty-shootout minigame: type /penalty.
 `;
