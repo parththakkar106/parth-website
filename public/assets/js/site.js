@@ -239,7 +239,9 @@
   var KICKS = 5, MAX_ROUNDS = 10, AIMX = [86, 160, 234], SIDE = ['left', 'the middle', 'right'], SHOT = ['left', 'down the middle', 'right'];
   // Your power is 0–1 along the bar: weak → always saved, good → keeper guesses, top corner → unstoppable, over → misses.
   var P_WEAK = .35, P_GOOD = .75, P_TOP = .86;
-  var RUNUP = 1900; // how long the CPU kicker takes to reach the ball, i.e. your time to pick a dive
+  // The CPU kicker's run-up. Dive in the last stretch of it (the green window): earlier and the kicker
+  // sees you go and shoots the other way, later and you're still standing in the middle.
+  var RUNUP = 2000, WINDOW = .74;
   function zoneOf(v) { return v < P_WEAK ? 0 : v < P_GOOD ? 1 : v < P_TOP ? 2 : 3; }
   var pen = null, penEndedAt = 0;
 
@@ -263,15 +265,14 @@
 
   function penalty() {
     var b = el('block pk', ''); log.appendChild(b);
-    var head = el('out', '<span class="h">Penalty shootout</span> <span class="d">· you vs the CPU · you kick, then you save · best of ' + KICKS + '</span>');
     var board = el('out pk-board',
       '<div class="pk-banner"><b></b><span></span></div>' + boardSvg() +
-      '<div class="pk-bar" aria-hidden="true"><i class="z0"></i><i class="z1"></i><i class="z2"></i><i class="z3"></i><b></b><em></em></div>' +
+      '<div class="pk-bar" aria-hidden="true"><i class="z0"></i><i class="z1"></i><i class="z2"></i><i class="z3"></i><b></b><em></em><u></u></div>' +
       '<div class="pk-score"></div>');
     var msg = el('out pk-msg', ''), ctl = el('pk-ctl', '');
     ctl.innerHTML = '<button type="button" data-a="0"></button><button type="button" data-a="1"></button><button type="button" data-a="2"></button><button type="button" class="shoot" data-a="s">SHOOT</button><button type="button" class="quit" data-a="q">esc</button>';
     var hint = el('out pk-hint d', '');
-    [head, board, msg, ctl, hint].forEach(function (n) { b.appendChild(n); });
+    [board, msg, ctl, hint].forEach(function (n) { b.appendChild(n); });
     var q = function (s) { return board.querySelector(s); };
     pen = { b: b, board: board, msg: msg, ctl: ctl, hint: hint, aimG: q('.pk-aim'), kp: q('.pk-kp'), kicker: q('.pk-kicker'), ball: q('.pk-ball'),
             net: q('.pk-net'), big: q('.pk-big'), bar: q('.pk-bar'), needle: q('.pk-bar b'), clock: q('.pk-bar em'),
@@ -313,7 +314,7 @@
   function setButtons(labels, shootOn, hint) {
     var bs = pen.ctl.querySelectorAll('button');
     for (var i = 0; i < 3; i++) bs[i].textContent = labels[i];
-    bs[3].hidden = !shootOn;
+    bs[3].style.visibility = shootOn ? '' : 'hidden'; // keeps its space, so the layout never shifts
     pen.ctl.classList.toggle('noshoot', !shootOn);
     pen.hint.textContent = hint;
   }
@@ -325,7 +326,7 @@
     pen.net.classList.remove('hit');
     pen.big.textContent = ''; pen.big.setAttribute('class', 'pk-big');
     place(pen.kp, 160, 110); place(pen.ball, 160, 150); pen.ball.setAttribute('r', 6); pen.ball.style.opacity = 1;
-    pen.bar.classList.remove('locked');
+    pen.bar.classList.remove('locked', 'live');
     pen.msg.innerHTML = '';
     drawScore();
   }
@@ -369,29 +370,34 @@
 
   /* --- the CPU's kick: you are the keeper --- */
   function startSave() {
-    pen.phase = 'save'; pen.dive = null; pen.t0 = performance.now();
+    pen.phase = 'save'; pen.dive = null; pen.early = false; pen.t0 = performance.now();
     resetPitch();
     pen.aimG.style.display = 'none'; pen.kicker.style.display = ''; pen.kicker.style.opacity = 1;
     pen.bar.classList.add('clock');
-    banner(roundName() + ' · YOU SAVE', 'dive before the kicker reaches the ball', false);
+    banner(roundName() + ' · YOU SAVE', 'dive when the bar reaches the green', false);
     setButtons(['◀ dive left', '▲ stay', 'dive right ▶'], false, '←/↑/→ or 1/2/3 to dive · esc to quit');
   }
 
   function dive(z) {
     if (!pen || pen.phase !== 'save' || pen.dive !== null) return;
     pen.dive = z;
-    pen.bannerS.textContent = z === 1 ? 'you hold your ground in the middle' : 'you dive ' + SIDE[z];
+    pen.early = (performance.now() - pen.t0) / RUNUP < WINDOW;
+    pen.bannerS.textContent = (pen.early ? 'too early! ' : '') + (z === 1 ? 'you stay in the middle' : 'you dive ' + SIDE[z]);
     tween(260, function (t) { keeperPose(z, 1 - Math.pow(1 - t, 2), false); });
   }
 
   function cpuKick() {
     pen.phase = 'fly';
     var d = pen.dive === null ? 1 : pen.dive, stayed = pen.dive === null;
-    var aim = Math.floor(Math.random() * 3), r = Math.random();
-    var z = r < .1 ? 3 : r < .2 ? 2 : 1;
+    var first = pen.cpu.length === 0, aim, z, r = Math.random();
+    if (first) { aim = 1; z = 1; } // the first kick always goes down the middle, so a new player sees how a save works
+    else if (pen.early) { aim = d === 1 ? (r < .5 ? 0 : 2) : 2 - d; z = 1; } // they saw you commit
+    else { aim = Math.floor(Math.random() * 3); z = r < .1 ? 3 : r < .2 ? 2 : 1; }
     var saved = z === 1 && d === aim, line;
     pen.kicker.style.opacity = .35;
-    if (z === 3) line = 'They blazed it over the bar. Lucky.';
+    if (pen.early && !first) line = d === 1 ? 'You planted yourself in the middle too early, so they picked a corner.' : 'Too early! They saw you go ' + SIDE[d] + ' and put it ' + SHOT[aim] + '.';
+    else if (first && saved) line = 'Down the middle, and you stayed put. From now on, dive when the bar turns green.';
+    else if (z === 3) line = 'They blazed it over the bar. Lucky.';
     else if (z === 2) line = aim === 1 ? 'Chipped over your head into the roof of the net.' : 'Top corner, nothing you could do.';
     else if (saved) line = (aim === 1 ? 'You stayed in the middle and it came straight at you.' : 'You dived ' + SIDE[d] + ' and so did they.');
     else line = (stayed ? 'You didn\'t move in time, ' : d === 1 ? 'You stayed in the middle, ' : 'You dived ' + SIDE[d] + ', ') + 'they went ' + SHOT[aim] + '.';
@@ -454,7 +460,8 @@
     if (pen.phase === 'aim') pen.needle.style.left = (powerAt(t) * 100) + '%';
     else if (pen.phase === 'save') {
       var k = Math.min(1, (t - pen.t0) / RUNUP);
-      pen.clock.style.width = ((1 - k) * 100) + '%';
+      pen.clock.style.width = (k * 100) + '%';
+      pen.bar.classList.toggle('live', k >= WINDOW);
       place(pen.kicker, 150 + 6 * k, 176 - 22 * k); // the kicker runs up to the ball
       if (k >= 1) cpuKick();
     }
@@ -462,12 +469,13 @@
 
   function drawScore(p) {
     p = p || pen;
-    var n = Math.max(KICKS, p.me.length, p.cpu.length), row = function (name, res) {
+    // colour by what is good for you: your goals and the CPU's misses are green, the rest red
+    var n = Math.max(KICKS, p.me.length, p.cpu.length), row = function (name, res, mine) {
       var out = [];
-      for (var i = 0; i < n; i++) out.push(i < res.length ? (res[i] ? '<span class="h">●</span>' : '<span class="pk-miss">✕</span>') : '<span class="pk-dim">○</span>');
+      for (var i = 0; i < n; i++) out.push(i < res.length ? (res[i] ? '<span class="' + (mine ? 'h' : 'pk-miss') + '">●</span>' : '<span class="' + (mine ? 'pk-miss' : 'h') + '">✕</span>') : '<span class="pk-dim">○</span>');
       return '<span class="d">' + name + '</span> ' + out.join(' ') + '  <b>' + sum(res) + '</b>';
     };
-    p.score.innerHTML = row('you', p.me) + '\n' + row('cpu', p.cpu);
+    p.score.innerHTML = row('you', p.me, true) + '\n' + row('cpu', p.cpu, false);
   }
 
   function endPen(quit) {

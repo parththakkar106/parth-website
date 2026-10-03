@@ -509,7 +509,6 @@ a.yr:hover { text-decoration: underline; }
 .pk-score { white-space: pre; letter-spacing: .02em; }
 .pk-dim { color: var(--t-faint); }
 .pk-miss { color: var(--t-red); }
-.pk-msg:empty { display: none; }
 .pk-ctl { display: flex; flex-wrap: wrap; gap: 6px; padding-left: 18px; margin-top: 4px; user-select: none; -webkit-user-select: none; }
 .pk-ctl button {
   font: 13px/1 var(--mono); color: var(--t-dim); background: transparent; cursor: pointer; touch-action: manipulation;
@@ -532,9 +531,7 @@ body.pk-on .inputwrap { display: none; }
 body.pk-on #log { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px); }
 
 /* /penalty: whose turn it is, outcome callouts, and the save turn */
-.pk-banner { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
 .pk-banner b { font-weight: 700; color: #0b1a10; background: var(--t-accent); padding: 3px 8px; border-radius: 4px; letter-spacing: .04em; }
-.pk-banner span { color: var(--t-dim); }
 .pk-board.saving .pk-banner b { background: var(--t-blue); }
 .pk-kicker { fill: none; stroke: var(--t-dim); stroke-width: 2.5; stroke-linecap: round; }
 .pk-kicker circle { fill: var(--t-dim); stroke: none; }
@@ -553,6 +550,13 @@ body.pk-on #log { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
 .pk-bar.clock em { display: block; height: 100%; background: var(--t-blue); }
 .pk-score { white-space: pre; line-height: 1.7; }
 .pk-score b { color: var(--t-fg); }
-@media (max-width: 560px) {
-  .pk-ctl.noshoot .quit { grid-column: 1 / -1; padding: 12px; }
-}
+
+/* the shootout keeps one fixed size while it runs: banner, message and controls never change height */
+.pk-banner { display: grid; gap: 6px; justify-items: start; }
+.pk-banner span { color: var(--t-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.pk-msg { min-height: 3.2em; }
+.pk-bar u { display: none; }
+.pk-bar.clock u { display: block; position: absolute; top: 0; bottom: 0; left: 74%; right: 0; background: rgba(24,181,72,.28); border-left: 2px solid var(--t-accent); }
+.pk-bar.clock.live { outline-color: var(--t-accent); box-shadow: 0 0 12px rgba(24,181,72,.55); }
+.pk-bar.clock.live u { background: rgba(24,181,72,.5); }
+@media (max-width: 560px) { .pk-msg { min-height: 4.8em; } }
