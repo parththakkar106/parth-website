@@ -51,7 +51,7 @@
     ['/work', 'Experience at Goldman Sachs and MapMyIndia'],
     ['/projects', 'AI D&D, Showdown, Job Copilot and more'],
     ['/interests', 'Football, Messi and video games'],
-    ['/latest', 'Barça: last results and what\'s next'],
+    ['/latest', 'Barça and Messi: last result, next match'],
     ['/penalty', 'Penalty shootout: you kick, then you save'],
     ['/contributions', 'GitHub activity, last 3 months'],
     ['/resume', 'Download the resume PDF'],
@@ -142,7 +142,7 @@
     if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); return; }
     if (cmd === '/plain') { setView('plain'); return; }
     if (cmd === '/penalty' || cmd === '/football') { penalty(); return; }
-    if (cmd === '/latest' || cmd === '/barca') { latest(b); log.appendChild(b); return; }
+    if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
       b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
@@ -236,70 +236,71 @@
   }
 
 
-  /* ---------- /latest: Barça results and fixtures from /api/barca (ESPN, cached at the edge) ---------- */
-  var barcaReq = null;
-  function barca() {
-    if (!barcaReq) barcaReq = fetch('api/barca').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
-    // a failed fetch can be retried by the next /latest
-    barcaReq.catch(function () { barcaReq = null; });
-    return barcaReq;
+  /* ---------- /latest: Barça and Messi's matches from /api/football (ESPN, cached at the edge) ---------- */
+  var fbReq = null;
+  function football() {
+    if (!fbReq) fbReq = fetch('api/football').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+    fbReq.catch(function () { fbReq = null; }); // a failed fetch can be retried by the next /latest
+    return fbReq;
   }
-  function bcDay(iso) { return new Date(iso).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }); }
-  function bcTime(iso) { return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
-  function bcIn(iso) {
+  function fbDay(iso) { return new Date(iso).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }); }
+  function fbTime(iso) { return new Date(iso).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }); }
+  function fbIn(iso) {
     var a = new Date(iso), n = new Date();
     var days = Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()) - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5);
     return days <= 0 ? 'today' : days === 1 ? 'tomorrow' : 'in ' + days + ' days';
   }
-  // Score from Barça's side, e.g. "3–1" or "2–2 (2–3 pens)".
-  function bcScore(m) {
+  // Score from our side, e.g. "3–1" or "2–2 (2–3 pens)".
+  function fbScore(m) {
     var us = m.atHome ? m.home : m.away, them = m.atHome ? m.away : m.home;
     return us.score + '–' + them.score + (us.pens != null && them.pens != null ? ' (' + us.pens + '–' + them.pens + ' pens)' : '');
   }
-  function bcVs(m) { return (m.atHome ? 'vs ' : 'at ') + esc(String(m.opponent)); }
+  // "vs Getafe" for Barça; Messi's lines name the team too: "Argentina vs Bolivia", "Inter Miami at Columbus".
+  function fbVs(m, named) { return (named ? esc(String(m.team)) + ' ' : '') + (m.atHome ? 'vs ' : 'at ') + esc(String(m.opponent)); }
+  // [tag, headline, detail, result] for the live, last and next match of one feed
+  function fbLines(f, named) {
+    if (!f) return [];
+    var out = [];
+    if (f.live) out.push(['live', fbScore(f.live) + ' ' + fbVs(f.live, named), esc(f.live.detail || '') + ' · ' + esc(f.live.comp)]);
+    if (f.last) out.push(['last', fbScore(f.last) + ' ' + fbVs(f.last, named), esc(f.last.comp) + ' · ' + fbDay(f.last.date), f.last.result, f.last.link]);
+    if (f.next && !f.live) out.push(['next', fbVs(f.next, named), esc(f.next.comp) + ' · ' + fbDay(f.next.date) + ', ' + fbTime(f.next.date) + ' · ' + fbIn(f.next.date)]);
+    return out;
+  }
 
   function latest(b) {
-    var out = el('out', '<span class="d">Fetching Barça\'s fixtures…</span>'); b.appendChild(out);
-    barca().then(function (d) {
-      var t = d.team || {}, rcls = { W: 'g', L: 'pk-miss', D: 'd' };
-      var html = '<span class="h">FC Barcelona</span>' + (t.standing ? ' <span class="d">· ' + esc(t.standing) + '</span>' : '') + '\n';
-      if (d.live) html += kv('<span class="pk-miss">● LIVE</span> ' + bcVs(d.live), '<span class="h">' + esc(bcScore(d.live)) + '</span> · ' + esc(d.live.detail || '') + ' · ' + esc(d.live.comp)) + '\n';
-      html += '<span class="h">Last results</span>' + (d.recent.length ? d.recent.map(function (m) {
-        return kv('<span class="' + rcls[m.result] + '">' + m.result + '</span> ' + bcVs(m), esc(bcScore(m)) + ' · ' + esc(m.comp) + ' · ' + bcDay(m.date));
-      }).join('') : '\n<span class="d">No results yet this season.</span>') + '\n';
-      html += '<span class="h">Up next</span>' + (d.upcoming.length ? d.upcoming.map(function (m) {
-        return kv('  ' + bcVs(m), esc(m.comp) + ' · ' + bcDay(m.date) + ', ' + bcTime(m.date) + ' <span class="d">· ' + bcIn(m.date) + '</span>');
-      }).join('') : '\n<span class="d">No fixtures announced yet.</span>') + '\n';
-      html += '<span class="d">Live from ESPN · times in your timezone · Visca el Barça</span>';
+    var out = el('out', '<span class="d">Fetching the fixtures…</span>'); b.appendChild(out);
+    football().then(function (d) {
+      var rcls = { W: 'g', L: 'pk-miss', D: 'd' };
+      function rows(lines) {
+        return lines.length ? lines.map(function (l) {
+          var k = l[0] === 'live' ? '<span class="pk-miss">live</span>' : '<span class="d">' + l[0] + '</span>';
+          return '\n  ' + k + '  ' + (l[3] ? '<span class="' + rcls[l[3]] + '">' + l[3] + '</span> ' : '') + l[1] + ' <span class="d">· ' + l[2] + '</span>';
+        }).join('') : '\n  <span class="d">Nothing scheduled right now.</span>';
+      }
+      var html = '<span class="h">Barça</span>' + (d.barca.standing ? ' <span class="d">· ' + esc(d.barca.standing) + '</span>' : '') + rows(fbLines(d.barca)) + '\n\n' +
+        '<span class="h">Messi</span> <span class="d">· Inter Miami &amp; Argentina</span>' + (d.messi ? rows(fbLines(d.messi, true)) : '\n  <span class="d">Feed unavailable right now.</span>') + '\n\n' +
+        '<span class="d">Live from ESPN · times in your timezone</span>';
       follow(function () { out.innerHTML = html; });
     }, function () {
       out.className = 'dot err'; out.textContent = 'Couldn\'t reach the match feed right now. Try /latest again in a bit.';
     });
   }
 
-  // plain view card
+  // plain view cards
   (function () {
-    var next = document.getElementById('bcNext'), past = document.getElementById('bcPast'), table = document.getElementById('bcTable');
-    if (!next) return;
-    barca().then(function (d) {
-      var t = d.team || {};
-      if (t.standing) table.innerHTML = '<b>' + esc(t.standing) + '</b>';
-      var m = d.live || d.upcoming[0];
-      if (!m) next.innerHTML = '<div class="k">Up next</div><p class="bc-msg">No fixtures announced yet.</p>';
-      else if (d.live) next.innerHTML = '<div class="k"><i class="bc-live"></i>Live now · ' + esc(m.comp) + '</div>' +
-        '<h3>Barça <span>' + bcVs(m) + '</span></h3><div class="score">' + esc(bcScore(m)) + '</div><div class="when">' + esc(m.detail || '') + '</div>';
-      else next.innerHTML = '<div class="k">Up next · ' + esc(m.comp) + '</div>' +
-        '<h3>Barça <span>' + bcVs(m) + '</span></h3>' +
-        '<div class="when">' + bcDay(m.date) + ', ' + bcTime(m.date) + (m.venue ? '<small>' + esc(m.venue) + '</small>' : '') + '</div>' +
-        '<span class="bc-soon">' + bcIn(m.date) + '</span>' +
-        (d.upcoming[1] && !d.live ? '<div class="then">Then ' + bcVs(d.upcoming[1]) + ' · ' + esc(d.upcoming[1].comp) + ' · ' + bcDay(d.upcoming[1].date) + '</div>' : '');
-      past.innerHTML = d.recent.length ? d.recent.map(function (r) {
-        var row = '<span class="r ' + r.result + '">' + r.result + '</span><span><b>' + bcVs(r) + '</b><small>' + esc(r.comp) + ' · ' + bcDay(r.date) + '</small></span><span class="sc">' + esc(bcScore(r)) + '</span>';
-        return '<li>' + (r.link ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener" style="display:contents">' + row + '</a>' : row) + '</li>';
-      }).join('') : '<li><span class="r">–</span><span><b>No results yet this season</b></span><span></span></li>';
-    }, function () {
-      next.innerHTML = '<div class="k">Up next</div><p class="bc-msg">The match feed is unavailable right now.</p>';
-    });
+    var bl = document.getElementById('fbBarca'), ml = document.getElementById('fbMessi');
+    if (!bl) return;
+    function fill(ul, f, named) {
+      var lines = fbLines(f, named);
+      ul.innerHTML = !f ? '<li class="fb-msg">Feed unavailable right now.</li>' : !lines.length ? '<li class="fb-msg">Nothing scheduled right now.</li>' : lines.map(function (l) {
+        var head = (l[3] ? '<span class="r ' + l[3] + '">' + l[3] + '</span>' : '') + l[1];
+        return '<li><span class="tag ' + l[0] + '">' + l[0] + '</span><span><b>' + (l[4] ? '<a href="' + esc(l[4]) + '" target="_blank" rel="noopener">' + head + '</a>' : head) + '</b><small>' + l[2] + '</small></span></li>';
+      }).join('');
+    }
+    football().then(function (d) {
+      if (d.barca.standing) document.getElementById('fbStand').textContent = '· ' + d.barca.standing;
+      fill(bl, d.barca); fill(ml, d.messi, true);
+    }, function () { fill(bl, null); fill(ml, null); });
   })();
 
   /* ---------- /penalty: a shootout against the CPU, drawn as a small SVG pitch ---------- */

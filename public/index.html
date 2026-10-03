@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=3c46da33ba">
+<link rel="stylesheet" href="assets/css/site.css?v=028e7330a7">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
   (function () {
@@ -332,24 +332,15 @@
       </div>
     </section>
 
-    <!-- 8. LATEST: live Barça results and fixtures from /api/barca -->
+    <!-- 8. LATEST: live football from /api/football -->
     <section aria-labelledby="s-latest">
       <div class="lbl">~/latest</div>
       <h2 class="sec-title" id="s-latest">What I'm <em>following</em>.</h2>
-      <article class="bc" id="barca" aria-live="polite">
-        <header>
-          <div class="k">Football · FC Barcelona</div>
-          <span class="bc-table" id="bcTable"></span>
-        </header>
-        <div class="bc-grid">
-          <div class="bc-next" id="bcNext"><p class="bc-msg">Loading Barça's fixtures…</p></div>
-          <div class="bc-past">
-            <div class="k">Last results</div>
-            <ol id="bcPast"></ol>
-          </div>
-        </div>
-        <small class="bc-src">Live from ESPN · times in your timezone · also in the terminal as <code>/latest</code></small>
-      </article>
+      <div class="fb" aria-live="polite">
+        <article class="fbc"><div class="k">Barça <span id="fbStand"></span></div><ul id="fbBarca"><li class="fb-msg">Loading…</li></ul></article>
+        <article class="fbc"><div class="k">Messi · Inter Miami &amp; Argentina</div><ul id="fbMessi"><li class="fb-msg">Loading…</li></ul></article>
+      </div>
+      <small class="fb-src">Live from ESPN · times in your timezone · also in the terminal as <code>/latest</code></small>
     </section>
   </div>
 
@@ -370,6 +361,6 @@
     </div>
   </section>
 </main>
-<script src="assets/js/site.js?v=4d55b7b329"></script>
+<script src="assets/js/site.js?v=0521a2e332"></script>
 </body>
 </html>
