@@ -28,7 +28,7 @@ async function realWeeks() {
   const token = process.env.GH_TOKEN;
   if (!token) throw new Error('GH_TOKEN is not set');
   const query = `query($login: String!) { user(login: $login) { contributionsCollection {
-    contributionCalendar { totalContributions weeks { contributionDays { contributionCount } } } } } }`;
+    contributionCalendar { totalContributions weeks { contributionDays { contributionCount date } } } } } }`;
   const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': 'parth.party' },
@@ -38,12 +38,13 @@ async function realWeeks() {
   const body = await res.json();
   if (body.errors) throw new Error(JSON.stringify(body.errors));
   const cal = body.data.user.contributionsCollection.contributionCalendar;
-  return { weeks: cal.weeks.map(w => w.contributionDays.map(d => d.contributionCount)), total: cal.totalContributions };
+  const last = cal.weeks.at(-1).contributionDays.at(-1);
+  return { weeks: cal.weeks.map(w => w.contributionDays.map(d => d.contributionCount)), total: cal.totalContributions, end: last.date };
 }
 
 const sample = process.argv.includes('--sample');
 const data = sample ? { weeks: sampleWeeks() } : await realWeeks();
 const total = data.total ?? data.weeks.flat().reduce((a, b) => a + b, 0);
 mkdirSync(new URL('.', OUT), { recursive: true });
-writeFileSync(OUT, JSON.stringify({ sample, login: LOGIN, updated: new Date().toISOString().slice(0, 10), total, weeks: data.weeks }) + '\n');
+writeFileSync(OUT, JSON.stringify({ sample, login: LOGIN, updated: new Date().toISOString().slice(0, 10), total, ...(data.end && { end: data.end }), weeks: data.weeks }) + '\n');
 console.log(`${sample ? 'sample' : 'real'}: ${total} contributions over ${data.weeks.length} weeks`);

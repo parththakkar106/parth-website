@@ -6,25 +6,62 @@
   function heatCaption() {
     return total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '');
   }
+  // Dates for the calendar: the data's last day is `end` (written by the nightly job), or, in older files,
+  // the latest day on or before `updated` that falls on the last cell's weekday (weeks start on Sunday).
+  var lastDay = null;
+  function findLastDay(d) {
+    var last = weeks.length ? weeks[weeks.length - 1].length - 1 : 0;
+    var t = new Date((d.end || d.updated || new Date().toISOString().slice(0, 10)) + 'T00:00:00Z');
+    if (!d.end) while (t.getUTCDay() !== last) t.setUTCDate(t.getUTCDate() - 1);
+    return t;
+  }
+  function dayDate(back) { var t = new Date(lastDay); t.setUTCDate(t.getUTCDate() - back); return t; }
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   function renderCells() {
-    var cells = document.getElementById('cells');
-    cells.innerHTML = '';
-    weeks.forEach(function (wk) {
-      wk.forEach(function (n) { var i = document.createElement('i'); var l = level(n); if (l) i.className = 'l' + l; i.title = n + ' contributions'; cells.appendChild(i); });
+    var cells = document.getElementById('cells'), months = document.getElementById('months');
+    cells.innerHTML = ''; months.innerHTML = '';
+    var flat = [].concat.apply([], weeks), k = 0, prevMonth = -1, labels = [];
+    months.style.gridTemplateColumns = 'repeat(' + weeks.length + ', minmax(0, 1fr))';
+    weeks.forEach(function (wk, w) {
+      wk.forEach(function (n) {
+        var t = dayDate(flat.length - 1 - k++), i = document.createElement('i'), l = level(n);
+        if (l) i.className = 'l' + l;
+        i.dataset.tip = (n ? n + ' contribution' + (n === 1 ? '' : 's') : 'No contributions') + ' on ' + DOW[t.getUTCDay()] + ', ' + MON[t.getUTCMonth()] + ' ' + t.getUTCDate();
+        cells.appendChild(i);
+        // label a column with its month when the month starts inside that week (or at the first column)
+        if (t.getUTCMonth() !== prevMonth) { labels.push({ w: w, m: MON[t.getUTCMonth()] }); prevMonth = t.getUTCMonth(); }
+      });
+    });
+    // a partial first month only gets a label if it doesn't crowd the next one
+    if (labels.length > 1 && labels[1].w - labels[0].w < 3) labels.shift();
+    labels.forEach(function (lb) {
+      var m = document.createElement('span'); m.textContent = lb.m;
+      m.style.gridColumn = lb.w >= weeks.length - 2 ? (lb.w + 1) + ' / -1' : (lb.w + 1) + ' / span 2';
+      if (lb.w >= weeks.length - 2) m.style.justifySelf = 'end';
+      months.appendChild(m);
     });
     document.getElementById('pTotal').textContent = heatCaption();
-    var flat = [].concat.apply([], weeks), active = 0, best = 0, streak = 0;
-    flat.forEach(function (n) { if (n > 0) active++; if (n > best) best = n; });
-    for (var i = flat.length - 1; i >= 0 && flat[i] > 0; i--) streak++;
-    if (!streak && flat.length > 1) for (var j = flat.length - 2; j >= 0 && flat[j] > 0; j--) streak++; // today may not have a commit yet
-    document.getElementById('heatStats').innerHTML =
-      '<div><dt>Active days</dt><dd>' + active + '<small> / ' + flat.length + '</small></dd></div>' +
-      '<div><dt>Busiest day</dt><dd>' + best + '</dd></div>' +
-      '<div><dt>Current streak</dt><dd>' + streak + '<small> days</small></dd></div>';
   }
+  // hover (or tap) a day to see its date
+  (function () {
+    var heat = document.getElementById('heat'), tip = document.getElementById('heatTip');
+    function show(e) {
+      var c = e.target.closest && e.target.closest('#cells i');
+      if (!c) { tip.hidden = true; return; }
+      tip.textContent = c.dataset.tip; tip.hidden = false;
+      var hr = heat.getBoundingClientRect(), cr = c.getBoundingClientRect();
+      var x = cr.left - hr.left + cr.width / 2, half = tip.offsetWidth / 2;
+      tip.style.left = Math.max(half, Math.min(hr.width - half, x)) + 'px';
+      tip.style.top = (cr.top - hr.top - 6) + 'px';
+    }
+    heat.addEventListener('pointerover', show);
+    heat.addEventListener('pointerdown', show);
+    heat.addEventListener('pointerleave', function () { tip.hidden = true; });
+  })();
   fetch('data/contributions.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (d) { weeks = (d.weeks || []).slice(-WEEKS_SHOWN); total = weeks.reduce(function (a, wk) { return a + wk.reduce(function (x, y) { return x + y; }, 0); }, 0); sample = !!d.sample; updated = d.updated || ''; renderCells(); })
+    .then(function (d) { weeks = (d.weeks || []).slice(-WEEKS_SHOWN); total = weeks.reduce(function (a, wk) { return a + wk.reduce(function (x, y) { return x + y; }, 0); }, 0); sample = !!d.sample; updated = d.updated || ''; lastDay = findLastDay(d); renderCells(); })
     .catch(function () { document.getElementById('pTotal').textContent = 'Contribution data is unavailable right now.'; });
 
   // terminal heatmap as block characters
@@ -88,7 +125,7 @@
     '/projects':
       kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine with a branching story tree\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
       kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia, same question, same clock\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
-      kv('<span class="h">parth.party/</span>', 'this site: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
+      kv('<span class="h">portfolio-website/</span>', 'this site, parth.party: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
       kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java · Networking</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
     '/interests':
