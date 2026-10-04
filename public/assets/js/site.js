@@ -49,7 +49,7 @@
   var COMMANDS = [
     ['/about', 'Who Parth is, in four lines'],
     ['/work', 'What he builds at Goldman Sachs, and before'],
-    ['/projects', 'AI D&D, Showdown, Job Copilot and more'],
+    ['/projects', 'AI D&D, Showdown, this site and more'],
     ['/interests', 'Football, Messi and video games'],
     ['/latest', 'Barça and Messi: last result, next match'],
     ['/penalty', 'Penalty shootout: you kick, then you save'],
@@ -88,7 +88,6 @@
     '/projects':
       kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine with a branching story tree\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
       kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia, same question, same clock\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
-      kv('<span class="h">job-copilot/</span>', 'finds roles daily, autofills applications, never auto-submits\n<span class="d">Python · Chrome MV3 · GitHub Actions · private repo</span>') +
       kv('<span class="h">parth.party/</span>', 'this site: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
       kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java · Networking</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
