@@ -1,36 +1,48 @@
 (function () {
   /* ---------- GitHub contributions (public/data/contributions.json, refreshed nightly) ---------- */
-  var WEEKS_SHOWN = 13; // rolling ~3 months
-  var weeks = [], total = 0, sample = true, updated = '';
+  // Window: from Jul 1, 2026 (when the site started) up to today, never more than the last 6 months.
+  var FLOOR = Date.UTC(2026, 6, 1), MAX_MONTHS = 6;
+  var weeks = [], total = 0, sample = true, start = null; // weeks: arrays of { n, t } per day; n is null before `start`
   function level(n) { return n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : n < 9 ? 3 : 4; }
-  function heatCaption() {
-    return total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '');
-  }
-  // Dates for the calendar: the data's last day is `end` (written by the nightly job), or, in older files,
-  // the latest day on or before `updated` that falls on the last cell's weekday (weeks start on Sunday).
-  var lastDay = null;
-  function findLastDay(d) {
-    var last = weeks.length ? weeks[weeks.length - 1].length - 1 : 0;
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  function dayLabel(t) { return MON[t.getUTCMonth()] + ' ' + t.getUTCDate(); }
+  function rangeText() { return 'since ' + dayLabel(start) + ', ' + start.getUTCFullYear() + (sample ? ' (sample data)' : ''); }
+  // The data's last day is `end` (written by the nightly job), or, in older files, the latest day on or before
+  // `updated` that falls on the last cell's weekday (GitHub weeks start on Sunday).
+  function lastDayOf(d) {
+    var w = d.weeks || [], last = w.length ? w[w.length - 1].length - 1 : 0;
     var t = new Date((d.end || d.updated || new Date().toISOString().slice(0, 10)) + 'T00:00:00Z');
     if (!d.end) while (t.getUTCDay() !== last) t.setUTCDate(t.getUTCDate() - 1);
     return t;
   }
-  function dayDate(back) { var t = new Date(lastDay); t.setUTCDate(t.getUTCDate() - back); return t; }
-  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  function load(d) {
+    sample = !!d.sample;
+    var all = d.weeks || [], end = lastDayOf(d), n = [].concat.apply([], all).length, k = 0;
+    var floor = new Date(end); floor.setUTCMonth(floor.getUTCMonth() - MAX_MONTHS); floor.setUTCDate(floor.getUTCDate() + 1);
+    start = new Date(Math.max(FLOOR, floor.getTime()));
+    weeks = all.map(function (wk) {
+      return wk.map(function (c) { var t = new Date(end); t.setUTCDate(t.getUTCDate() - (n - 1 - k++)); return { n: t >= start ? c : null, t: t }; });
+    }).filter(function (wk) { return wk.some(function (c) { return c.n !== null; }); });
+    total = 0; weeks.forEach(function (wk) { wk.forEach(function (c) { total += c.n || 0; }); });
+  }
   function renderCells() {
     var cells = document.getElementById('cells'), months = document.getElementById('months');
     cells.innerHTML = ''; months.innerHTML = '';
-    var flat = [].concat.apply([], weeks), k = 0, prevMonth = -1, labels = [];
+    var prevMonth = -1, labels = [], days = [];
+    // about 27px per week, like the original 3-month card; the stats wrap underneath when there's no room
+    document.getElementById('heat').style.setProperty('--weeks', weeks.length);
     months.style.gridTemplateColumns = 'repeat(' + weeks.length + ', minmax(0, 1fr))';
     weeks.forEach(function (wk, w) {
-      wk.forEach(function (n) {
-        var t = dayDate(flat.length - 1 - k++), i = document.createElement('i'), l = level(n);
-        if (l) i.className = 'l' + l;
-        i.dataset.tip = (n ? n + ' contribution' + (n === 1 ? '' : 's') : 'No contributions') + ' on ' + DOW[t.getUTCDay()] + ', ' + MON[t.getUTCMonth()] + ' ' + t.getUTCDate();
+      wk.forEach(function (c) {
+        var i = document.createElement('i');
+        if (c.n === null) { i.className = 'pad'; cells.appendChild(i); return; }
+        days.push(c.n);
+        var l = level(c.n); if (l) i.className = 'l' + l;
+        i.dataset.tip = (c.n ? c.n + ' contribution' + (c.n === 1 ? '' : 's') : 'No contributions') + ' on ' + DOW[c.t.getUTCDay()] + ', ' + dayLabel(c.t);
         cells.appendChild(i);
         // label a column with its month when the month starts inside that week (or at the first column)
-        if (t.getUTCMonth() !== prevMonth) { labels.push({ w: w, m: MON[t.getUTCMonth()] }); prevMonth = t.getUTCMonth(); }
+        if (c.t.getUTCMonth() !== prevMonth) { labels.push({ w: w, m: MON[c.t.getUTCMonth()] }); prevMonth = c.t.getUTCMonth(); }
       });
     });
     // a partial first month only gets a label if it doesn't crowd the next one
@@ -41,13 +53,14 @@
       if (lb.w >= weeks.length - 2) m.style.justifySelf = 'end';
       months.appendChild(m);
     });
-    document.getElementById('pTotal').textContent = heatCaption();
+    document.getElementById('heatRange').textContent = rangeText();
     var active = 0, best = 0, streak = 0;
-    flat.forEach(function (n) { if (n > 0) active++; if (n > best) best = n; });
-    for (var i = flat.length - 1; i >= 0 && flat[i] > 0; i--) streak++;
-    if (!streak && flat.length > 1) for (var j = flat.length - 2; j >= 0 && flat[j] > 0; j--) streak++; // today may not have a commit yet
+    days.forEach(function (n) { if (n > 0) active++; if (n > best) best = n; });
+    for (var i = days.length - 1; i >= 0 && days[i] > 0; i--) streak++;
+    if (!streak && days.length > 1) for (var j = days.length - 2; j >= 0 && days[j] > 0; j--) streak++; // today may not have a commit yet
     document.getElementById('heatStats').innerHTML =
-      '<div><dt>Active days</dt><dd>' + active + '<small> / ' + flat.length + '</small></dd></div>' +
+      '<div><dt>Contributions</dt><dd>' + total.toLocaleString() + '</dd></div>' +
+      '<div><dt>Active days</dt><dd>' + active + '<small> / ' + days.length + '</small></dd></div>' +
       '<div><dt>Busiest day</dt><dd>' + best + '</dd></div>' +
       '<div><dt>Current streak</dt><dd>' + streak + '<small> days</small></dd></div>';
   }
@@ -69,16 +82,16 @@
   })();
   fetch('data/contributions.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (d) { weeks = (d.weeks || []).slice(-WEEKS_SHOWN); total = weeks.reduce(function (a, wk) { return a + wk.reduce(function (x, y) { return x + y; }, 0); }, 0); sample = !!d.sample; updated = d.updated || ''; lastDay = findLastDay(d); renderCells(); })
-    .catch(function () { document.getElementById('pTotal').textContent = 'Contribution data is unavailable right now.'; });
+    .then(function (d) { load(d); renderCells(); })
+    .catch(function () { document.getElementById('heatRange').textContent = 'Contribution data is unavailable right now.'; });
 
   // terminal heatmap as block characters
   function asciiHeat() {
     var rows = ['', '', '', '', '', '', ''];
     weeks.forEach(function (wk) {
       for (var d = 0; d < 7; d++) {
-        var l = d < wk.length ? level(wk[d]) : 0;
-        rows[d] += d < wk.length ? '<span class="h' + l + '">■</span>' : ' ';
+        var c = wk[d];
+        rows[d] += c && c.n !== null ? '<span class="h' + level(c.n) + '">■</span>' : ' ';
       }
     });
     var lbl = ['   ', 'Mon', '   ', 'Wed', '   ', 'Fri', '   '];
@@ -98,7 +111,7 @@
     ['/interests', 'Football, Messi and video games'],
     ['/latest', 'Barça and Messi: last result, next match'],
     ['/penalty', 'Penalty shootout: you kick, then you save'],
-    ['/contributions', 'GitHub activity, last 3 months'],
+    ['/contributions', 'GitHub activity since July'],
     ['/contact', 'LinkedIn and GitHub'],
     ['/plain', 'Switch to the plain page'],
     ['/clear', 'Clear the screen'],
@@ -186,7 +199,7 @@
     if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
-      b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions in the last 3 months' + (sample ? ' (sample data)' : '') + ' · includes private repos</span>'));
+      b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions ' + rangeText() + ' · includes private repos</span>'));
       var h = el('heat', '<pre>' + asciiHeat() + '</pre>'); b.appendChild(h);
       b.appendChild(el('out', '<span class="d">less </span><span class="h0">■</span><span class="h1">■</span><span class="h2">■</span><span class="h3">■</span><span class="h4">■</span><span class="d"> more</span>'));
     }
