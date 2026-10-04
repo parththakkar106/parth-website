@@ -1,4 +1,4 @@
-/* Layout: two views over one dataset. Terminal = a full-height fake Claude Code session; Plain = an editorial page in resume order. A fixed pill switches between them. */
+/* Layout: two views over one dataset. Terminal = a full-height fake Claude Code session; Plain = an editorial about-me page. A fixed pill switches between them. */
 :root {
   /* terminal (always dark, like the real CLI) */
   --t-bg: #131714;
@@ -172,7 +172,7 @@ body.plain .mocknote { color: var(--muted); }
 .chips button:hover, .chips button:focus-visible { color: var(--t-accent); border-color: var(--t-accent); outline: none; }
 
 /* ---------- plain view ---------- */
-/* Layout: editorial single page, sections in resume order, each labelled like a path (~/experience) to echo the terminal. */
+/* Layout: editorial single page (about, projects, work, interests), each section labelled like a path (~/projects) to echo the terminal. */
 #plain { font: 16px/1.6 var(--sans); padding-inline: 16px; padding-block: 72px 0; overflow-x: clip; position: relative; isolation: isolate; }
 /* Faint code rain behind everything, drawn by site.js. */
 #rain { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
@@ -232,7 +232,7 @@ body.plain .mocknote { color: var(--muted); }
 .fact b { display: block; font-weight: 600; }
 .fact span { color: var(--muted); font-size: 14px; }
 
-/* experience */
+/* work */
 .tl { display: grid; gap: 28px; position: relative; padding-left: 28px; }
 .tl::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(var(--accent), var(--line)); }
 .co { position: relative; display: grid; gap: 16px; }
@@ -246,9 +246,10 @@ body.plain .mocknote { color: var(--muted); }
 @media (hover: hover) { .wcard:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px rgba(0,0,0,.35); } }
 .wcard .k { font: 500 12px/1 var(--smono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .wcard h4 { margin: 0; font: 700 19px/1.2 var(--display); letter-spacing: -0.015em; }
-.wcard .big { font: 800 40px/1 var(--display); letter-spacing: -0.04em; color: var(--accent); }
-.wcard .big small { font: 500 13px/1.3 var(--sans); color: var(--muted); letter-spacing: 0; display: block; margin-top: 6px; }
-.wcard ul { margin: 0; padding-left: 16px; color: var(--muted); font-size: 14.5px; display: grid; gap: 6px; }
+.wcard p { margin: 0; color: var(--muted); font-size: 14.5px; }
+/* technology tags, shared by work cards and project cards */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tags .tag { font: 12px/1 var(--smono); padding: 5px 8px; border-radius: 5px; background: var(--chip); color: var(--muted); }
 .viz { background: var(--bg); border-radius: 10px; padding: 12px; }
 .viz svg { display: block; width: 100%; height: auto; overflow: visible; }
 .viz text { font: 500 10px var(--smono); fill: var(--muted); }
@@ -257,28 +258,10 @@ body.plain .mocknote { color: var(--muted); }
 .viz .tw { fill: var(--card); }
 .wcard.solo { grid-column: span 3; grid-template-columns: 1fr 1.2fr; align-items: center; }
 
-/* skills */
-.skills { display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: auto auto; gap: 14px; }
-.sk { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 14px; align-content: start; min-width: 0; }
-.sk.tall { grid-row: span 2; background: var(--ink); color: var(--ink-fg); border-color: var(--ink); }
-.sk h3 { margin: 0; font: 700 18px/1.2 var(--display); display: flex; justify-content: space-between; gap: 8px; }
-.sk h3 span { font: 500 12px/1.5 var(--smono); color: var(--muted); }
-.sk.tall h3 span { color: var(--ink-dim); }
+/* chip lists (interests) */
 .chips2 { display: flex; flex-wrap: wrap; gap: 8px; }
 .chips2 span { font: 500 13.5px/1 var(--sans); padding: 9px 12px; border-radius: 8px; background: var(--chip); }
-.sk.tall .chips2 span { background: #212a24; color: var(--ink-fg); }
 .chips2 span.hot { background: var(--accent); color: #fff; }
-.sk.tall .chips2 span.hot { background: #18b548; color: #0b1a10; }
-
-/* education */
-.edu { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
-.edu > * { min-width: 0; }
-.gauge { width: 132px; height: 132px; }
-.gauge text { font: 800 30px var(--display); fill: var(--fg); letter-spacing: -1px; }
-.gauge text.sm { font: 500 11px var(--smono); fill: var(--muted); letter-spacing: 0; }
-.edu h3 { margin: 0 0 6px; font: 700 clamp(22px, 3vw, 30px)/1.15 var(--display); letter-spacing: -0.02em; }
-.edu p { margin: 0 0 14px; color: var(--muted); }
-.edu .badge { display: inline-block; font: 600 12px/1 var(--smono); color: var(--accent); background: var(--accent-soft); padding: 6px 9px; border-radius: 6px; margin-bottom: 12px; }
 
 /* projects */
 .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
@@ -319,16 +302,6 @@ body.plain .mocknote { color: var(--muted); }
 .grid-heat .cells i.l3 { background: var(--heat-3); } .grid-heat .cells i.l4 { background: var(--heat-4); }
 .heat-cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 13px/1.4 var(--smono); color: var(--muted); }
 
-/* leadership */
-.awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.aw { border-top: 3px solid var(--fg); padding-top: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
-.aw:nth-child(1) { border-color: var(--accent); }
-.aw b { font: 800 clamp(36px, 5vw, 54px)/1 var(--display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
-.aw b small { font-size: .45em; color: var(--muted); letter-spacing: 0; }
-.aw h4 { margin: 0; font: 700 17px/1.3 var(--display); }
-.aw span { color: var(--muted); font-size: 14.5px; }
-.aw .yr { font: 500 12px/1 var(--smono); }
-
 /* contact */
 .contact { background: var(--ink); color: var(--ink-fg); margin: 96px -16px 0; padding: 72px 16px calc(env(safe-area-inset-bottom, 0px) + 48px); }
 .contact .in { max-width: 1080px; margin: 0 auto; display: grid; gap: 24px; }
@@ -346,16 +319,12 @@ body.plain .mocknote { color: var(--muted); }
   .mini { transform: none; }
   .work { grid-template-columns: 1fr; }
   .wcard.solo { grid-column: auto; grid-template-columns: 1fr; }
-  .skills { grid-template-columns: 1fr; }
-  .sk.tall { grid-row: auto; }
   .bento { grid-template-columns: 1fr; }
   .pj.w4, .pj.w3, .pj.w2, .pj.w6 { grid-column: auto; }
-  .awards { grid-template-columns: 1fr; gap: 28px; }
 }
 @media (max-width: 560px) {
   .menu button { grid-template-columns: 110px 1fr; }
   #term { font-size: 13px; }
-  .edu { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
@@ -425,21 +394,16 @@ main.enter { animation: fadein .28s ease both; }
   .hero p.lede { font-size: 16px; }
   .cta, .contact .row { display: grid; grid-template-columns: 1fr 1fr; }
   .cta .btn, .contact .btn { text-align: center; }
-  .cta .btn.pri, .contact .btn.pri, .contact .row .btn:last-child { grid-column: 1 / -1; }
+  .cta .btn.pri { grid-column: 1 / -1; }
   .sec-title { margin-bottom: 22px; }
   .about p { font-size: 18px; }
   .tl { padding-left: 22px; }
   .co::before { left: -22px; width: 13px; height: 13px; }
   .tl::before { left: 5px; }
   .co h3 { font-size: 23px; }
-  .wcard, .pj, .sk { padding: 16px; }
-  .wcard .big { font-size: 36px; }
+  .wcard, .pj { padding: 16px; }
   .pj .top { flex-wrap: wrap; row-gap: 4px; }
   .pj .yr { white-space: normal; }
-  .sk h3 span { white-space: nowrap; }
-  .edu { padding: 20px; gap: 18px; }
-  .gauge { width: 112px; height: 112px; }
-  .awards { gap: 22px; }
 }
 
 /* about: linked facts with logos; inline links */
