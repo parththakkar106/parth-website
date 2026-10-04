@@ -42,6 +42,14 @@
       months.appendChild(m);
     });
     document.getElementById('pTotal').textContent = heatCaption();
+    var active = 0, best = 0, streak = 0;
+    flat.forEach(function (n) { if (n > 0) active++; if (n > best) best = n; });
+    for (var i = flat.length - 1; i >= 0 && flat[i] > 0; i--) streak++;
+    if (!streak && flat.length > 1) for (var j = flat.length - 2; j >= 0 && flat[j] > 0; j--) streak++; // today may not have a commit yet
+    document.getElementById('heatStats').innerHTML =
+      '<div><dt>Active days</dt><dd>' + active + '<small> / ' + flat.length + '</small></dd></div>' +
+      '<div><dt>Busiest day</dt><dd>' + best + '</dd></div>' +
+      '<div><dt>Current streak</dt><dd>' + streak + '<small> days</small></dd></div>';
   }
   // hover (or tap) a day to see its date
   (function () {
