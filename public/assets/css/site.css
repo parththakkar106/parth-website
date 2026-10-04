@@ -415,6 +415,9 @@ a.fact:hover { border-color: var(--fg); transform: translateY(-2px); }
 .about p a:hover mark { background: var(--accent); color: #fff; }
 .co h3 a, .edu h3 a, .pj h3 a { text-decoration: none; }
 .co h3 a:hover, .edu h3 a:hover, .pj h3 a:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+/* a small arrow on linked project titles so they read as clickable */
+.pj h3 a::after { content: "\2197"; display: inline-block; margin-left: .22em; font-size: .62em; vertical-align: .38em; opacity: .7; transition: transform .2s ease, opacity .2s ease; }
+.pj h3 a:hover::after, .pj h3 a:focus-visible::after { opacity: 1; transform: translate(2px, -2px); }
 a.yr { text-decoration: none; }
 a.yr:hover { text-decoration: underline; }
 .out a.h { color: var(--t-accent); text-decoration: none; }
