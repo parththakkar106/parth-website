@@ -48,14 +48,13 @@
 
   var COMMANDS = [
     ['/about', 'Who Parth is, in four lines'],
-    ['/work', 'Experience at Goldman Sachs and MapMyIndia'],
+    ['/work', 'What he builds at Goldman Sachs, and before'],
     ['/projects', 'AI D&D, Showdown, Job Copilot and more'],
     ['/interests', 'Football, Messi and video games'],
     ['/latest', 'Barça and Messi: last result, next match'],
     ['/penalty', 'Penalty shootout: you kick, then you save'],
     ['/contributions', 'GitHub activity, last 3 months'],
-    ['/resume', 'Download the resume PDF'],
-    ['/contact', 'Email, GitHub, LinkedIn'],
+    ['/contact', 'LinkedIn and GitHub'],
     ['/plain', 'Switch to the plain page'],
     ['/clear', 'Clear the screen'],
     ['/help', 'List commands']
@@ -76,21 +75,22 @@
   var OUT = {
     '/about':
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
-      'Quantitative Analyst at Goldman Sachs since Jan 2024. Builds the Python optimizer behind $600B+ of firm funding and a LangGraph agent for the weekly funding plan.\n' +
+      'Quantitative Analyst at Goldman Sachs since Jan 2024, building a Python optimization engine and a LangGraph agent for the weekly funding plan.\n' +
       'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://dnd.parth.party/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
       '<span class="d">Next: /work · /projects · /interests · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
-      kv('<span class="g">✓</span> Liability Optimizer', '$600B+ funding · solver runs 90% faster') +
-      kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent, 20+ tools · ~60% less planning time') +
-      kv('<span class="g">✓</span> Infra', '4+ k8s microservices · Redis cache −74% latency') + '\n' +
+      kv('<span class="g">✓</span> Liability Optimizer', 'optimization engine for firm funding\n<span class="d">Python</span>') +
+      kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent with a human-in-the-loop commit\n<span class="d">LangGraph · Pydantic · Python</span>') +
+      kv('<span class="g">✓</span> Infra', 'microservices with CI/CD, SSO and a Redis cache\n<span class="d">Kubernetes · ArgoCD · Docker · GitLab CI · Redis</span>') + '\n' +
       '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>' +
-      kv('<span class="g">✓</span> EV routing backend', 'FastAPI, Dijkstra on a geospatial graph'),
+      kv('<span class="g">✓</span> EV routing backend', 'Dijkstra on a geospatial graph, full-stack prototype\n<span class="d">FastAPI · React · MongoDB</span>'),
     '/projects':
-      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine · branching story tree · 549 tests\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
-      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia · WebSockets · 31,777 questions\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
-      kv('<span class="h">job-copilot/</span>', 'finds jobs daily, autofills applications, never auto-submits\n<span class="d">private repo</span>') +
-      kv('<span class="h">fog-computing/</span>', 'Java fog system, ~20 nodes · −31% delay, −79% energy <span class="d">(2022)</span>') + '\n' +
+      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine with a branching story tree\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
+      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia, same question, same clock\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
+      kv('<span class="h">job-copilot/</span>', 'finds roles daily, autofills applications, never auto-submits\n<span class="d">Python · Chrome MV3 · GitHub Actions · private repo</span>') +
+      kv('<span class="h">parth.party/</span>', 'this site: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
+      kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java · Networking</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
     '/interests':
       '<span class="h">Off the clock</span>' +
@@ -98,40 +98,37 @@
       kv('<span class="h">video games</span>', 'FIFA, Split Fiction, GTA, Watch Dogs, and more') + '\n' +
       '<span class="d">Barça\'s latest: /latest · fancy a shootout? /penalty</span>',
     '/contact':
-      'email     <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>\n' +
-      'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>\n' +
-      'linkedin  <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">linkedin.com/in/parth-thakkar-10</a>',
-    '/resume':
-      '<span class="g">✓</span> <a href="assets/Parth_Thakkar_Resume.pdf" download>Parth_Thakkar_Resume.pdf</a> <span class="d">(PDF, 1 page)</span>',
+      'linkedin  <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">linkedin.com/in/parth-thakkar-10</a>\n' +
+      'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>',
     '/help': null,
     '/contributions': null
   };
 
   function helpText() {
     return COMMANDS.map(function (c) { return kv('<span class="h">' + c[0] + '</span>', '<span class="d">' + c[1] + '</span>'); }).join('') +
-      '\n<span class="d">Anything else you type goes to the model, which only answers from Parth\'s resume and project notes.</span>';
+      '\n<span class="d">Anything else you type goes to the model, which only answers from notes about Parth and his projects.</span>';
   }
 
   // scripted "LLM" answers for the mock
   var ASK = [
     { k: /goldman|gs|work|job|langgraph|agent|optimi/i,
-      reads: ['about/resume.md', 'work/goldman.md'],
+      reads: ['about/me.md', 'work/goldman.md'],
       a: 'At Goldman Sachs Parth works on two main systems.\n\n' +
-         '1. The <span class="h">Liability Optimizer</span>: a Python optimization engine behind $600B+ of firm funding. Its output drives multi-year liquidity buffer decisions. He cut solver runtime 90% for similar runs with warm starts, state reuse and selective recomputation.\n\n' +
-         '2. The <span class="h">AI Funding Planning Assistant</span>: a ReAct agent built with LangGraph and Pydantic, with 20+ tools and a human-in-the-loop commit path. It cut the time to build a weekly plan by about 60%.\n\n' +
+         '1. The <span class="h">Liability Optimizer</span>: a Python optimization engine that plans how the firm funds itself. Its output feeds liquidity buffer decisions, and he made repeat runs fast with warm starts and state reuse.\n\n' +
+         '2. The <span class="h">AI Funding Planning Assistant</span>: a ReAct agent built with LangGraph and Pydantic. It explains what drives the weekly funding plan and edits it through a human-in-the-loop commit path.\n\n' +
          '<span class="d">Want the infra side (Kubernetes, Redis caching)? Ask away, or run /work.</span>' },
     { k: /showdown|trivia|quiz|websocket/i,
       reads: ['projects/showdown.md'],
       a: 'Showdown is a real-time 1v1 trivia game at <a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>. Both players get the same question on the same 15-second clock.\n\nOne FastAPI process owns every live room; each room runs its timers as asyncio tasks over a WebSocket. Postgres (Neon) is read once at startup and written when a match ends, so play never waits on the database.' },
     { k: /d&d|dnd|dungeon|story|referee/i,
       reads: ['projects/ai-dnd.md', 'projects/ai-dnd/GUIDE.md'],
-      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. 549 backend tests.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
+      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. Built with FastAPI and React.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
     { k: /fun|hobb|interest|football|soccer|messi|game|fifa|gta/i,
       reads: ['about/interests.md'],
       a: 'Outside work Parth watches a lot of football and is a big <span class="h">Messi</span> fan. He also plays video games: FIFA, Split Fiction, GTA, Watch Dogs and more.\n\n<span class="d">Run /penalty to take a few spot kicks yourself.</span>' },
     { k: /contact|reach|email|talk|chat|connect|linkedin/i,
       reads: ['about/contact.md'],
-      a: 'Parth is always happy to talk about his work. Email <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>, or find him on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a> and <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>.' }
+      a: 'Parth is always happy to talk about his work. The easiest way to reach him is <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>, and his code is on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a>.' }
   ];
   var OFFTOPIC = /weather|recipe|poem|joke|stock price|bitcoin|write me|code for|translate/i;
 
@@ -206,7 +203,7 @@
     var off = !hit && OFFTOPIC.test(q);
 
     var chain = wait(500);
-    var reads = hit ? hit.reads : (off ? [] : ['about/resume.md']);
+    var reads = hit ? hit.reads : (off ? [] : ['about/me.md']);
     reads.forEach(function (f) {
       chain = chain.then(function () {
         b.insertBefore(el('dot tool', '<b>Read</b><span>(' + f + ')</span>'), spin);
@@ -775,10 +772,4 @@
 
   document.getElementById('openTerm').addEventListener('click', function () { setView('term'); });
   document.getElementById('playPen').addEventListener('click', function () { setView('term'); if (!busy) { addUser('/penalty'); penalty(); } });
-  document.getElementById('copyMail').addEventListener('click', function () {
-    var b = this, t = b.textContent;
-    try {
-      navigator.clipboard.writeText('thakkarparth106@gmail.com').then(function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = t; }, 1400); }, function () {});
-    } catch (e) {}
-  });
 })();

@@ -1,8 +1,11 @@
 # parth.party
 
 Parth Thakkar's personal site. It opens as a terminal styled after Claude Code, where visitors run slash commands
-or ask questions that an LLM answers from Parth's resume and project notes. A **Plain** switch (top right, or `/plain`,
-or `?view=plain`) shows a normal portfolio page in resume order.
+or ask questions that an LLM answers from notes about Parth and his projects. A **Plain** switch (top right, or `/plain`,
+or `?view=plain`) shows a normal about-me page: about, projects, work, interests and live football.
+
+It is an about-me site, not a resume: each thing Parth built gets its technologies and a line or two on what it is,
+with no impact or efficiency numbers. Contact is LinkedIn and GitHub only.
 
 Plain HTML, CSS and JavaScript with no build step, plus one Cloudflare Pages Function for the chat.
 
@@ -13,7 +16,6 @@ public/                     the site (Cloudflare Pages serves this folder)
   index.html                both views; terminal and plain share one page
   assets/css/site.css       tokens at the top (:root), terminal styles, then plain-view styles
   assets/js/site.js         commands, chat, contributions heatmap, view switch
-  assets/Parth_Thakkar_Resume.pdf
   data/contributions.json   GitHub contribution calendar, refreshed nightly
 functions/api/chat.js       POST /api/chat streams the model's answer; GET reports whether it is live
 functions/api/_knowledge.js the only facts the model may use, plus its rules
@@ -38,7 +40,7 @@ Guardrails in the function: same-site `Origin` check, last 8 turns only, 1,000 c
 tokens. Also add a Cloudflare **rate limiting rule** for `/api/chat` (Security → WAF → Rate limiting rules, e.g.
 10 requests per minute per IP) so nobody can drain the free quota.
 
-When the resume or projects change, update `functions/api/_knowledge.js` along with the page.
+When projects or work change, update `functions/api/_knowledge.js` along with the page.
 
 ## Changing CSS or JS
 
