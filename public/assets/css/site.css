@@ -200,6 +200,9 @@ body.plain .mocknote { color: var(--muted); }
 @media (hover: hover) { .btn:hover { transform: translateY(-2px); border-color: var(--fg); } }
 .btn:active { transform: scale(.97); }
 .btn.pri { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* icon-only buttons for LinkedIn, GitHub and email */
+.btn.icon { display: inline-grid; place-items: center; width: 42px; height: 42px; padding: 0; }
+.btn.icon svg { width: 19px; height: 19px; display: block; }
 .mini {
   background: var(--ink); color: var(--ink-fg); border-radius: 14px; padding: 0 0 18px; font: 13px/1.65 var(--mono);
   box-shadow: 0 30px 60px -30px rgba(0,0,0,.45); transform: rotate(1.2deg); overflow: hidden;
@@ -399,9 +402,7 @@ main.enter { animation: fadein .28s ease both; }
   .hero { padding-top: 8px; gap: 32px; }
   .hero .hey { font-size: 12px; }
   .hero p.lede { font-size: 16px; }
-  .cta, .contact .row { display: grid; grid-template-columns: 1fr 1fr; }
-  .cta .btn, .contact .btn { text-align: center; }
-  .cta .btn.pri { grid-column: 1 / -1; }
+  .cta .btn.pri { flex: 1 1 100%; text-align: center; }
   .sec-title { margin-bottom: 22px; }
   .about p { font-size: 18px; }
   .tl { padding-left: 22px; }

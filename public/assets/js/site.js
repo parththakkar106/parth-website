@@ -112,7 +112,7 @@
     ['/latest', 'Barça and Messi: last result, next match'],
     ['/penalty', 'Penalty shootout: you kick, then you save'],
     ['/contributions', 'GitHub activity since July'],
-    ['/contact', 'LinkedIn and GitHub'],
+    ['/contact', 'LinkedIn, GitHub and email'],
     ['/plain', 'Switch to the plain page'],
     ['/clear', 'Clear the screen'],
     ['/help', 'List commands']
@@ -156,7 +156,8 @@
       '<span class="d">Barça\'s latest: /latest · fancy a shootout? /penalty</span>',
     '/contact':
       'linkedin  <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">linkedin.com/in/parth-thakkar-10</a>\n' +
-      'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>',
+      'github    <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a>\n' +
+      'email     <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>',
     '/help': null,
     '/contributions': null
   };
@@ -185,7 +186,7 @@
       a: 'Outside work Parth watches a lot of football and is a big <span class="h">Messi</span> fan. He also plays video games: FIFA, Split Fiction, GTA, Watch Dogs and more.\n\n<span class="d">Run /penalty to take a few spot kicks yourself.</span>' },
     { k: /contact|reach|email|talk|chat|connect|linkedin/i,
       reads: ['about/contact.md'],
-      a: 'Parth is always happy to talk about his work. The easiest way to reach him is <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a>, and his code is on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a>.' }
+      a: 'Parth is always happy to talk about his work. Reach him on <a href="https://linkedin.com/in/parth-thakkar-10" target="_blank" rel="noopener">LinkedIn</a> or at <a href="mailto:thakkarparth106@gmail.com">thakkarparth106@gmail.com</a>; his code is on <a href="https://github.com/parththakkar106" target="_blank" rel="noopener">GitHub</a>.' }
   ];
   var OFFTOPIC = /weather|recipe|poem|joke|stock price|bitcoin|write me|code for|translate/i;
 
