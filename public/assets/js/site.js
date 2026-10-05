@@ -138,14 +138,14 @@
       '<span class="d">Next: /work · /projects · /interests · or ask anything</span>',
     '/work':
       '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
-      kv('<span class="g">✓</span> Liability Optimizer', 'optimization engine for firm funding\n<span class="d">Python</span>') +
       kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent with a human-in-the-loop commit\n<span class="d">LangGraph · Pydantic · Python</span>') +
+      kv('<span class="g">✓</span> Liability Optimizer', 'optimization engine for firm funding\n<span class="d">Python</span>') +
       kv('<span class="g">✓</span> Infra', 'microservices with CI/CD, SSO and a Redis cache\n<span class="d">Kubernetes · ArgoCD · Docker · GitLab CI · Redis</span>') + '\n' +
       '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>' +
       kv('<span class="g">✓</span> EV routing backend', 'Dijkstra on a geospatial graph, full-stack prototype\n<span class="d">FastAPI · React · MongoDB</span>'),
     '/projects':
-      kv('<span class="h">ai-dnd/</span>', 'LLM storytelling engine with a branching story tree\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
-      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia, same question, same clock\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
+      kv('<span class="h">ai-dnd/</span>', 'AI storytelling with custom worlds, memory and branching\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
+      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia with friends, 120+ topics\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
       kv('<span class="h">portfolio-website/</span>', 'this site, parth.party: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
       kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java · Networking</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
