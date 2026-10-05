@@ -3,6 +3,7 @@ export const KNOWLEDGE = `
 # Parth Thakkar
 Software engineer. Quantitative Analyst at Goldman Sachs (Jan 2024 to present).
 Computer Science graduate of BITS Pilani (B.E. (Hons) Computer Science, Aug 2020 to Jul 2024).
+Fell in love with computers at 14, when he first played games on one, and started learning to code right after.
 This site is an about-me page: what Parth builds at work and on the side. There is no resume on the site.
 Contact: LinkedIn linkedin.com/in/parth-thakkar-10 is the best way to reach him. Code: GitHub github.com/parththakkar106.
 

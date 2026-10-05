@@ -425,6 +425,10 @@ a.fact:hover { border-color: var(--fg); transform: translateY(-2px); }
 /* a small arrow on linked project titles so they read as clickable */
 .pj h3 a::after { content: "\2197"; display: inline-block; margin-left: .22em; font-size: .62em; vertical-align: .38em; opacity: .7; transition: transform .2s ease, opacity .2s ease; }
 .pj h3 a:hover::after, .pj h3 a:focus-visible::after { opacity: 1; transform: translate(2px, -2px); }
+/* inline links in running copy (hero) get the same arrow */
+a.ext { color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+a.ext::after { content: "\2197"; display: inline-block; margin-left: .15em; font-size: .8em; color: var(--accent); transition: transform .2s ease; }
+a.ext:hover::after, a.ext:focus-visible::after { transform: translate(2px, -2px); }
 a.yr { text-decoration: none; }
 a.yr:hover { text-decoration: underline; }
 .out a.h { color: var(--t-accent); text-decoration: none; }
