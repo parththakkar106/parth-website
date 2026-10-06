@@ -18,7 +18,7 @@ public/                     the site (Cloudflare Pages serves this folder)
   assets/js/site.js         commands, chat, contributions heatmap, view switch
   data/contributions.json   GitHub contribution calendar, refreshed nightly
 functions/api/chat.js       POST /api/chat streams the model's answer; GET reports whether it is live
-functions/api/_knowledge.js the only facts the model may use, plus its rules
+functions/api/_knowledge.js the model's rules; its facts about Parth come from Cloudflare KV (see below)
 functions/api/football.js   GET /api/football: Barça's and Messi's (Inter Miami, Argentina) last and next matches from ESPN, edge-cached 10 min (1 min while live)
 scripts/fetch-contributions.mjs
 .github/workflows/contributions.yml
@@ -36,11 +36,17 @@ marked **DEMO**. To go live, in Cloudflare: **Workers & Pages → parth-website 
 
 Redeploy, and the status line changes from DEMO to "model: live via OpenRouter". The key never reaches the browser.
 
-Guardrails in the function: same-site `Origin` check, last 8 turns only, 1,000 characters per message, 450 output
+Guardrails in the function: same-site `Origin` check, last 8 turns only, 1,000 characters per message, 700 output
 tokens. Also add a Cloudflare **rate limiting rule** for `/api/chat` (Security → WAF → Rate limiting rules, e.g.
 10 requests per minute per IP) so nobody can drain the free quota.
 
-When projects or work change, update `functions/api/_knowledge.js` along with the page.
+### The model's notes (kept out of GitHub)
+
+Everything the model knows about Parth is a Markdown file stored in Cloudflare KV, not in this repo, so it never
+shows up on GitHub or in the browser. The chat function reads it from the KV namespace bound as `NOTES`
+(see `wrangler.toml`), key `parth`. To change what the model knows: **Storage & databases → KV → parth-notes →
+`parth` → Edit**, paste the new Markdown and save. It is picked up within about five minutes, no deploy needed.
+The master copy lives outside the repo; keep it free of figures, phone numbers and job-search details.
 
 ## Changing CSS or JS
 

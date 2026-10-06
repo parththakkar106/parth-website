@@ -169,6 +169,18 @@
 
   // scripted "LLM" answers for the mock
   var ASK = [
+    { k: /workflow|how does he (work|build)|claude code|his process|tools does he/i,
+      reads: ['about/how-i-work.md'],
+      a: 'Mostly Python, mostly in <span class="h">Claude Code</span>. His loop: start with an idea, have the AI critique it and poke holes, and make sure he understands each one (that is usually where he learns something). Then the AI drafts a plan, he reviews it, the AI executes, and he reviews the merge request before shipping.' },
+    { k: /terminal|theme|matrix|turbo|this site look|why.*(green|look)/i,
+      reads: ['about/this-site.md'],
+      a: 'Parth started coding in <span class="h">Turbo C++</span> as a kid and always loved that terminal screen. This site mixes that Matrix-style look with Claude Code\'s text-first layout, which he uses every day.' },
+    { k: /grew up|hometown|where is he|where does he|where.*from|ahmedabad|bangalore|bengaluru|atlanta|pilani/i,
+      reads: ['about/me.md'],
+      a: 'Parth grew up in <span class="h">Ahmedabad</span>, India, studied at BITS Pilani in a small town in Rajasthan, and has worked in Bangalore and Atlanta.' },
+    { k: /learning|building now|working on now|currently|next|rag|retriev/i,
+      reads: ['about/now.md'],
+      a: 'No brand-new project right now: Parth is still polishing <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a>. On the learning side he is going deeper on <span class="h">RAG</span>, especially better ways to retrieve the right data.' },
     { k: /goldman|gs|work|job|langgraph|agent|optimi/i,
       reads: ['about/me.md', 'work/goldman.md'],
       a: 'At Goldman Sachs Parth works on two main systems.\n\n' +
@@ -177,10 +189,10 @@
          '<span class="d">Want the infra side (Kubernetes, Redis caching)? Ask away, or run /work.</span>' },
     { k: /showdown|trivia|quiz|websocket/i,
       reads: ['projects/showdown.md'],
-      a: 'Showdown is a real-time 1v1 trivia game at <a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>. Both players get the same question on the same 15-second clock.\n\nOne FastAPI process owns every live room; each room runs its timers as asyncio tasks over a WebSocket. Postgres (Neon) is read once at startup and written when a match ends, so play never waits on the database.' },
+      a: 'As a kid Parth loved QuizUp, a 1v1 quiz app, and was number one in the world in a few topics, Percy Jackson included. It shut down and nothing replaced it, so he built his own, which also lets friends in different cities play together.\n\nShowdown is a real-time 1v1 trivia game at <a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>. Both players get the same question on the same 15-second clock.\n\nOne FastAPI process owns every live room; each room runs its timers as asyncio tasks over a WebSocket. Postgres (Neon) is read once at startup and written when a match ends, so play never waits on the database.' },
     { k: /d&d|dnd|dungeon|story|referee/i,
       reads: ['projects/ai-dnd.md', 'projects/ai-dnd/GUIDE.md'],
-      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. Built with FastAPI and React.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
+      a: 'AI D&amp;D is an AI Dungeon-style storytelling app that runs on any OpenAI-compatible model. Parth sees an AI-driven game engine as the next step after deterministic games: an open world with guardrails so the AI doesn\'t go haywire.\n\nThe interesting part is the <span class="h">world-state referee</span>: each turn the model proposes changes to the world, and a Python engine decides which ones actually stick. Stories are a tree, so any turn can hold several takes and you can branch from any of them. Built with FastAPI and React.\n\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">Play the demo</a>' },
     { k: /fun|hobb|interest|football|soccer|messi|game|fifa|gta/i,
       reads: ['about/interests.md'],
       a: 'Outside work Parth watches a lot of football and is a big <span class="h">Messi</span> fan. He also plays video games: FIFA, Split Fiction, GTA, Watch Dogs and more.\n\n<span class="d">Run /penalty to take a few spot kicks yourself.</span>' },
@@ -216,10 +228,12 @@
   /* ---------- live model via /api/chat, scripted answers when it is off ---------- */
   var history = [];
   var modelTag = document.getElementById('modelTag');
+  var modelLive = false;
   fetch('api/chat', { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : { live: false }; })
     .catch(function () { return { live: false }; })
     .then(function (d) {
+      modelLive = !!d.live;
       modelTag.innerHTML = d.live ? 'model: live via OpenRouter' : '<span class="demo-pill">DEMO</span> scripted answers<span class="soon"> · live AI coming soon</span>';
     });
 
@@ -285,7 +299,7 @@
         : off ? 'I only answer questions about Parth and his work. Try /projects, or ask what he built at Goldman.'
         : 'I don\'t have a note on that. Here is the short version of Parth: software engineer, Quant Analyst at Goldman Sachs building optimizers and LLM agents, and builder of AI D&amp;D and Showdown on the side. Try /projects or /work.';
       return stream(d, text).then(function () {
-        b.appendChild(el('demo', '<span class="demo-pill">DEMO</span> scripted answer · the live AI model is not connected yet'));
+        b.appendChild(el('demo', '<span class="demo-pill">DEMO</span> scripted answer · ' + (modelLive ? 'the live AI is busy right now, try again in a minute' : 'the live AI model is not connected yet')));
       });
     }).then(function () { busy = false; focusInput(); });
   }

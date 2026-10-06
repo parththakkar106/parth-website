@@ -1,3 +1,13 @@
 name = "parth-website"
 pages_build_output_dir = "public"
 compatibility_date = "2026-09-01"
+
+[vars]
+OPENROUTER_MODEL = "google/gemma-4-31b-it:free"
+# Backups OpenRouter tries in order when the main model is busy.
+OPENROUTER_FALLBACK_MODELS = "nvidia/nemotron-3-super-120b-a12b:free,thinkingmachines/inkling-small:free"
+
+# Notes about Parth for the chat model (key "parth"); kept in Cloudflare, not in this repo.
+[[kv_namespaces]]
+binding = "NOTES"
+id = "4ef6ffd98ad64838bc733143f2a16de9"
