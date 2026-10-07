@@ -277,10 +277,13 @@
     var chain = wait(500);
     var reads = hit ? hit.reads : (off ? [] : ['about/me.md']);
     reads.forEach(function (f) {
+      var line;
       chain = chain.then(function () {
-        b.insertBefore(el('dot tool', '<b>Read</b><span>(' + f + ')</span>'), spin);
-        return wait(380);
+        line = el('dot tool reading', '<b>Read</b><span>(' + f + ')</span>');
+        b.insertBefore(line, spin);
+        return wait(650);
       }).then(function () {
+        line.classList.remove('reading');
         b.insertBefore(el('res', 'Read ' + (20 + Math.floor(Math.random() * 60)) + ' lines'), spin);
         return wait(250);
       });

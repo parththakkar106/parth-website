@@ -113,6 +113,7 @@ body.plain .mocknote { color: var(--muted); }
 /* drawn in CSS: the ⏺ glyph renders as an orange emoji on Apple devices */
 .dot::before { content: ""; position: absolute; left: 1px; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--t-fg); }
 .dot.tool::before { background: var(--t-accent); }
+.dot.tool.reading::before { background: none; box-shadow: inset 0 0 0 1.5px var(--t-accent); }
 .dot.err::before { background: var(--t-red); }
 .tool b { font-weight: 700; }
 .tool span { color: var(--t-dim); }
