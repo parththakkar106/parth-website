@@ -808,14 +808,15 @@
         if (t < 1) requestAnimationFrame(f);
       })(t0);
     };
-    // play when half visible; reset only once fully off screen, so it replays on the next visit but not on small scrolls
+    // play when half visible; reset only once fully off the bottom of the screen, so it replays when scrolled
+    // down to again but stays finished when scrolled back up to (and small scrolls never restart it)
     var artIo = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
         var n = e.target;
         if (e.intersectionRatio >= 0.5 && !n.classList.contains('play')) {
           n.classList.add('play');
           [].forEach.call(n.querySelectorAll('[data-to]'), count);
-        } else if (!e.isIntersecting && n.classList.contains('play')) {
+        } else if (!e.isIntersecting && e.boundingClientRect.top > 0 && n.classList.contains('play')) {
           n.classList.remove('play');
         }
       });
