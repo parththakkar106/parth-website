@@ -799,9 +799,9 @@
   /* ---------- plain view: card art animates the first time it scrolls into view ---------- */
   if ('IntersectionObserver' in window && !calm) {
     var count = function (b) {
-      var to = +b.dataset.to, t0 = performance.now();
+      var to = +b.dataset.to, t0 = performance.now(), ms = b.closest('.slow') ? 2000 : 900;
       (function f(now) {
-        var t = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - t, 3);
+        var t = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - t, 3);
         b.textContent = Math.round(to * e).toLocaleString('en-US');
         if (t < 1) requestAnimationFrame(f);
       })(t0);
