@@ -19,6 +19,7 @@ public/                     the site (Cloudflare Pages serves this folder)
   data/contributions.json   GitHub contribution calendar, refreshed nightly
 functions/api/chat.js       POST /api/chat streams the model's answer; GET reports whether it is live
 functions/api/_knowledge.js the model's rules; its facts about Parth come from Cloudflare KV (see below)
+functions/api/_tools.js     what the chat model can look up: /latest, the La Liga table, live goals, recent GitHub commits, project READMEs
 functions/api/football.js   GET /api/football: Barça's and Messi's (Inter Miami, Argentina) last and next matches from ESPN, edge-cached 10 min (1 min while live)
 scripts/fetch-contributions.mjs
 .github/workflows/contributions.yml
@@ -36,7 +37,7 @@ marked **DEMO**. To go live, in Cloudflare: **Workers & Pages → parth-website 
 
 Redeploy, and the status line changes from DEMO to "model: live via OpenRouter". The key never reaches the browser.
 
-Guardrails in the function: same-site `Origin` check, last 8 turns only, 1,000 characters per message, 700 output
+Guardrails in the function: same-site `Origin` check, last 12 messages only, 1,000 characters per message, 700 output
 tokens. Also add a Cloudflare **rate limiting rule** for `/api/chat` (Security → WAF → Rate limiting rules, e.g.
 10 requests per minute per IP) so nobody can drain the free quota.
 

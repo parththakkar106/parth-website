@@ -1,15 +1,17 @@
-// POST /api/chat  -> streams the model's answer as text/plain.
+// POST /api/chat  -> streams the model's answer as text/plain; X-Tools names the tools it ran (see _tools.js).
 // GET  /api/chat  -> { live: boolean } so the page can show whether answers are live or scripted.
 //
 // Configure in Cloudflare Pages > Settings > Variables and secrets:
 //   OPENROUTER_API_KEY  (secret)  your OpenRouter key
 //   OPENROUTER_MODEL    (text)    model id, e.g. one of OpenRouter's ":free" models
 //   OPENROUTER_FALLBACK_MODELS (text, optional) comma-separated models OpenRouter tries when the main one is busy
+//   GITHUB_TOKEN        (secret, optional) a read-only GitHub token; raises the GitHub API limit for the activity tool
 // and a KV namespace bound as NOTES whose key "parth" holds the Markdown notes about Parth (kept out of GitHub).
 // Until all of these are set, POST returns 503 and the page falls back to scripted demo answers.
 import { systemPrompt } from './_knowledge.js';
+import { runTools, zoneOk } from './_tools.js';
 
-const MAX_TURNS = 8;
+const MAX_TURNS = 12;
 const MAX_CHARS = 1000;
 const ALLOWED_ORIGINS = [/^https:\/\/(www\.)?parth\.party$/, /^https:\/\/([a-z0-9-]+\.)?parth-(party|website)(-[a-z0-9]+)?\.pages\.dev$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
 
@@ -28,7 +30,7 @@ export function onRequestGet({ env }) {
   return Response.json({ live: isLive(env) }, { headers: { 'Cache-Control': 'no-store' } });
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   const origin = request.headers.get('Origin');
   if (origin && !ALLOWED_ORIGINS.some(re => re.test(origin))) return new Response('Forbidden', { status: 403 });
   if (!isLive(env)) return Response.json({ live: false }, { status: 503 });
@@ -41,7 +43,8 @@ export async function onRequestPost({ request, env }) {
     .map(m => ({ role: m.role, content: m.content.slice(0, MAX_CHARS) }));
   if (!messages.length || messages[messages.length - 1].role !== 'user') return new Response('Bad request', { status: 400 });
 
-  const notes = await loadNotes(env);
+  const tz = typeof body.tz === 'string' && body.tz.length < 64 && zoneOk(body.tz) ? body.tz : 'UTC';
+  const [notes, tools] = await Promise.all([loadNotes(env), runTools({ messages, tz, request, env, waitUntil })]);
   if (!notes) return Response.json({ live: false }, { status: 503 });
 
   const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -59,7 +62,7 @@ export async function onRequestPost({ request, env }) {
       // Some fallbacks think before answering: keep that short and out of the reply.
       reasoning: { effort: 'low', exclude: true },
       max_tokens: 700,
-      messages: [{ role: 'system', content: systemPrompt(notes) }, ...messages],
+      messages: [{ role: 'system', content: systemPrompt(notes, tools) }, ...messages],
     }),
   });
   if (!upstream.ok || !upstream.body) {
@@ -89,6 +92,6 @@ export async function onRequestPost({ request, env }) {
   });
 
   return new Response(upstream.body.pipeThrough(toText), {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' },
+    headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'X-Tools': tools.map(t => t.name).join(',') },
   });
 }

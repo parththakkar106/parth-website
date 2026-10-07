@@ -47,7 +47,8 @@ function match(e, ids) {
 
 const get = u => fetch(u, { headers: { Accept: 'application/json' } }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
 
-// Merges results and fixtures for one or more teams into { standing, live, last, next }.
+// Merges results and fixtures for one or more teams into { standing, live, last, next }, plus the last
+// and next few matches (recent, upcoming) for the chat model.
 async function follow(ids) {
   const feeds = await Promise.all(ids.flatMap(id => [get(FEED(id)), get(FEED(id) + '?fixture=true')]));
   const byId = new Map();
@@ -57,7 +58,9 @@ async function follow(ids) {
     standing: feeds[0].team?.standingSummary || null,
     live: all.find(m => m.state === 'in') || null,
     last: all.filter(m => m.state === 'post').pop() || null,
-    next: all.find(m => m.state === 'pre') || null
+    next: all.find(m => m.state === 'pre') || null,
+    recent: all.filter(m => m.state === 'post').slice(-3),
+    upcoming: all.filter(m => m.state === 'pre').slice(0, 3)
   };
 }
 
@@ -81,7 +84,9 @@ async function refresh(cache, key) {
   return { data, body };
 }
 
-export async function onRequestGet({ request, waitUntil }) {
+// The current data, from this edge's cache when it has a copy. Also used by chat.js, so the chat model sees
+// the same matches as /latest.
+export async function footballData(request, waitUntil) {
   const cache = caches.default, key = new Request(new URL('/api/football', request.url).toString());
   const hit = await cache.match(key);
   if (hit) {
@@ -89,10 +94,14 @@ export async function onRequestGet({ request, waitUntil }) {
     let data = null;
     try { data = JSON.parse(body); } catch {}
     if (data && Date.now() - Date.parse(data.updated) > fresh(data)) waitUntil(refresh(cache, key).catch(() => {}));
-    if (data) return send(body, 'public, max-age=60');
+    if (data) return { data, body };
   }
+  return refresh(cache, key);
+}
+
+export async function onRequestGet({ request, waitUntil }) {
   try {
-    const { body } = await refresh(cache, key);
+    const { body } = await footballData(request, waitUntil);
     return send(body, 'public, max-age=60');
   } catch {
     return Response.json({ error: 'unavailable' }, { status: 502, headers: { 'Cache-Control': 'no-store' } });

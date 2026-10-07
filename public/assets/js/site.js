@@ -206,10 +206,12 @@
 
   function runSlash(cmd) {
     var b = el('block', '');
-    if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); return; }
+    if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); history = []; return; }
     if (cmd === '/plain') { setView('plain'); return; }
     if (cmd === '/penalty' || cmd === '/football') { penalty(); return; }
-    if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); return; }
+    // the chat model sees which commands ran (and their text) so follow-up questions make sense;
+    // for /latest it fetches the live matches itself
+    if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); remember(cmd, 'Showed the live Barça and Messi matches (/latest).'); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
       b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions ' + rangeText() + ' · includes private repos</span>'));
@@ -219,6 +221,8 @@
     else if (OUT.hasOwnProperty(cmd)) b.appendChild(el('out', OUT[cmd]));
     else b.appendChild(el('dot err', 'Unknown command ' + esc(cmd) + '. Try /help.'));
     log.appendChild(b);
+    if (cmd === '/contributions') remember(cmd, 'Showed Parth\'s GitHub contributions heatmap.');
+    else if (OUT.hasOwnProperty(cmd)) remember(cmd, b.textContent.trim());
   }
 
   var GLYPHS = ['·', '✢', '✳', '✶', '✻', '✽'];
@@ -227,6 +231,8 @@
 
   /* ---------- live model via /api/chat, scripted answers when it is off ---------- */
   var history = [];
+  function remember(cmd, text) { history.push({ role: 'user', content: cmd }, { role: 'assistant', content: text.slice(0, 1000) }); }
+  var TZ = ''; try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
   var modelTag = document.getElementById('modelTag');
   var modelLive = false;
   fetch('api/chat', { cache: 'no-store' })
@@ -239,13 +245,22 @@
 
   // Resolves to a streaming Response, or null when the live model is off or unreachable.
   function callModel(q) {
-    var msgs = history.concat([{ role: 'user', content: q }]).slice(-8);
-    return fetch('api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs }) })
+    var msgs = history.concat([{ role: 'user', content: q }]).slice(-12);
+    return fetch('api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs, tz: TZ }) })
       .then(function (r) { return r.ok && r.body && /text\/plain/.test(r.headers.get('content-type') || '') ? r : null; })
       .catch(function () { return null; });
   }
+  // The model asks to run a site command by ending its answer with [run:/projects]; hide that while it streams.
+  // Only when the visitor asked to see, open or play something; the model is keen to run commands otherwise.
+  var WANTS = /\b(show|see|open|view|display|play|launch|start|switch|go to|take me|bring up|pull up|let me|can i|i want|i'd like|run)\b/i;
+  var RUNNABLE = ['/about', '/work', '/projects', '/interests', '/latest', '/contributions', '/contact', '/penalty', '/plain'];
+  function stripRun(text) { return text.replace(/\s*\[run:[^\]\n]*\]?[^\n]*/gi, '').replace(/\s*\[(r(u(n)?)?)?$/i, ''); }
+  // Models like non-breaking hyphens (4‑2, real‑time) and narrow spaces, which some phone monospace fonts can't
+  // draw (Android shows them as underscores), so swap in the plain characters.
+  function plainChars(text) { return text.replace(/[\u2010\u2011\u2012]/g, '-').replace(/[\u00a0\u202f\u2007\u2009]/g, ' '); }
   function fmt(text) {
-    return esc(text).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
+    return esc(plainChars(stripRun(text))).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>')
+      .replace(/\[([^\]\n]+)\]\((https:\/\/[^)\s"]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
   }
   function streamResponse(node, res) {
     var reader = res.body.getReader(), dec = new TextDecoder(), acc = '';
@@ -261,6 +276,7 @@
 
   function ask(q) {
     busy = true;
+    var runAfter = null;
     var b = el('block', ''); log.appendChild(b);
     var spin = el('spin', ''); b.appendChild(spin);
     var gi = 0, vi = Math.floor(Math.random() * VERBS.length), t0 = Date.now();
@@ -290,10 +306,26 @@
     });
     chain.then(function () { return live; }).then(function (res) {
       clearInterval(timer); spin.remove();
+      // tools the server ran for this answer (functions/api/_tools.js), e.g. /latest for a question about Barça
+      if (res) (res.headers.get('X-Tools') || '').split(',').forEach(function (t) {
+        var repo = t.indexOf('readme:') === 0 && t.slice(7);
+        var show = t === 'latest' ? ['Run', '/latest', 'Fetched Barça and Messi\'s matches from ESPN']
+          : t === 'table' ? ['Fetch', 'La Liga table', 'Fetched the standings from ESPN']
+          : t === 'live' ? ['Fetch', 'live match', 'Fetched the goals so far']
+          : t === 'github' ? ['Fetch', 'github.com/parththakkar106', 'Fetched recent commits']
+          : repo ? ['Read', repo + '/README.md', 'Read it from GitHub'] : null;
+        if (!show) return;
+        b.appendChild(el('dot tool', '<b>' + show[0] + '</b><span>(' + esc(show[1]) + ')</span>'));
+        b.appendChild(el('res', esc(show[2])));
+      });
       var d = el('dot', ''); b.appendChild(d);
       if (res) {
         return streamResponse(d, res).then(function (answer) {
+          var m = answer.match(/\[run:\s*(\/[a-z]+)/i), cmd = m && m[1].toLowerCase();
+          answer = plainChars(stripRun(answer)).trim();
+          follow(function () { d.innerHTML = fmt(answer); });
           history.push({ role: 'user', content: q }, { role: 'assistant', content: answer });
+          if (cmd && RUNNABLE.indexOf(cmd) !== -1 && WANTS.test(q)) runAfter = cmd;
         }, function () {
           d.className = 'dot err'; d.textContent = 'The answer got cut off. Try asking again.';
         });
@@ -304,7 +336,12 @@
       return stream(d, text).then(function () {
         b.appendChild(el('demo', '<span class="demo-pill">DEMO</span> scripted answer · ' + (modelLive ? 'the live AI is busy right now, try again in a minute' : 'the live AI model is not connected yet')));
       });
-    }).then(function () { busy = false; focusInput(); });
+    }).then(function () {
+      busy = false;
+      // the model asked to run a command for the visitor: run it as if they had typed it
+      if (runAfter) { b.appendChild(el('dot tool', '<b>Run</b><span>(' + runAfter + ')</span>')); runSlash(runAfter); scroll(); }
+      if (!busy) focusInput();
+    });
   }
 
 
