@@ -110,9 +110,10 @@ body.plain .mocknote { color: var(--muted); }
 .u::before { content: "> "; color: var(--t-dim); }
 .block { display: grid; gap: 4px; min-width: 0; }
 .dot { white-space: pre-wrap; word-break: break-word; padding-left: 18px; position: relative; }
-.dot::before { content: "⏺"; position: absolute; left: 0; color: var(--t-fg); }
-.dot.tool::before { color: var(--t-green); }
-.dot.err::before { color: var(--t-red); }
+/* drawn in CSS: the ⏺ glyph renders as an orange emoji on Apple devices */
+.dot::before { content: ""; position: absolute; left: 1px; top: .6em; width: 7px; height: 7px; border-radius: 50%; background: var(--t-fg); }
+.dot.tool::before { background: var(--t-accent); }
+.dot.err::before { background: var(--t-red); }
 .tool b { font-weight: 700; }
 .tool span { color: var(--t-dim); }
 .res { padding-left: 18px; color: var(--t-dim); white-space: pre-wrap; }
@@ -214,8 +215,8 @@ body.plain .mocknote { color: var(--muted); }
 .mini .q { color: var(--ink-dim); }
 .mini .q::before { content: "> "; }
 .mini .r { padding-left: 16px; position: relative; }
-.mini .r::before { content: "⏺"; position: absolute; left: 0; }
-.mini .r.t::before { color: #8fbf7f; }
+.mini .r::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.mini .r.t::before { background: #18b548; }
 .mini .r.t span { color: var(--ink-dim); }
 .mini .c { color: #18b548; }
 .mini .cursor { display: inline-block; width: 8px; height: 15px; background: #18b548; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
