@@ -140,20 +140,24 @@ async function repoFor(ctx, question) {
 export async function runTools({ messages, tz, request, env, waitUntil }) {
   const ctx = { request, env, waitUntil };
   const users = messages.filter(m => m.role === 'user').map(m => m.content);
-  const latest = users[users.length - 1] || '', recent = users.slice(-3).join('\n'), lastTwo = users.slice(-2).join('\n');
+  const latest = users[users.length - 1] || '', prev = users[users.length - 2] || '';
+  // A short follow-up with no topic of its own ("and the next one?", "why?") carries on with the previous question's tools.
+  const own = FOOTBALL.test(latest) || GITHUB.test(latest) || Boolean(await repoFor(ctx, latest));
+  const followUp = !own && latest.split(/\s+/).length <= 8 && !/^\s*(show|open|play|let me|take me|go to|switch)\b/i.test(latest);
+  const asked = followUp ? prev + '\n' + latest : latest;
   const jobs = [];
   const add = (name, fn, fail) => jobs.push(fn().then(text => ({ name, text }), e => { console.log('tool failed', name, String(e)); return fail ? { name, text: fail } : null; }));
 
-  if (FOOTBALL.test(recent)) {
+  if (FOOTBALL.test(asked)) {
     const football = footballData(request, waitUntil).then(r => r.data);
     add('latest', async () => footballText(await football, tz), 'Output of /latest: the match feed is unavailable right now.');
-    if (TABLE.test(lastTwo)) add('table', () => laLigaTable(ctx));
+    if (TABLE.test(asked)) add('table', () => laLigaTable(ctx));
     const d = await football.catch(() => null);
     for (const m of [d?.barca?.live, d?.messi?.live].filter(Boolean)) add('live', () => liveEvents(ctx, m));
   }
-  if (GITHUB.test(latest)) add('github', () => githubActivity(ctx, tz));
-  const repo = await repoFor(ctx, lastTwo);
-  if (repo) add('readme:' + repo, () => readRepo(ctx, repo, latest));
+  if (GITHUB.test(asked)) add('github', () => githubActivity(ctx, tz));
+  const repo = await repoFor(ctx, asked);
+  if (repo) add('readme:' + repo, () => readRepo(ctx, repo, asked));
 
   return (await Promise.all(jobs)).filter(Boolean);
 }
