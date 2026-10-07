@@ -800,19 +800,26 @@
   if ('IntersectionObserver' in window && !calm) {
     var count = function (b) {
       var to = +b.dataset.to, t0 = performance.now(), ms = b.closest('.slow') ? 2000 : 900;
+      b._t0 = t0;
       (function f(now) {
+        if (b._t0 !== t0) return; // a newer replay took over
         var t = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - t, 3);
         b.textContent = Math.round(to * e).toLocaleString('en-US');
         if (t < 1) requestAnimationFrame(f);
       })(t0);
     };
+    // play when half visible; reset only once fully off screen, so it replays on the next visit but not on small scrolls
     var artIo = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        e.target.classList.add('play'); artIo.unobserve(e.target);
-        [].forEach.call(e.target.querySelectorAll('[data-to]'), count);
+        var n = e.target;
+        if (e.intersectionRatio >= 0.5 && !n.classList.contains('play')) {
+          n.classList.add('play');
+          [].forEach.call(n.querySelectorAll('[data-to]'), count);
+        } else if (!e.isIntersecting && n.classList.contains('play')) {
+          n.classList.remove('play');
+        }
       });
-    }, { threshold: 0.5 });
+    }, { threshold: [0, 0.5] });
     [].forEach.call(plain.querySelectorAll('[data-anim]'), function (n) { n.classList.add('arm'); artIo.observe(n); });
   }
 
