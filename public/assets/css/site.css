@@ -592,20 +592,19 @@ body.pk-on #log { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
 @keyframes an-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
 @keyframes an-ring { 0% { filter: drop-shadow(0 0 0 rgba(24,181,72,0)); } 40% { filter: drop-shadow(0 0 6px rgba(24,181,72,.9)); } 100% { filter: drop-shadow(0 0 0 rgba(24,181,72,0)); } }
 
-/* portfolio card: the switch flips the window from the plain page to the terminal and back */
+/* portfolio card: the switch flips the window from the plain page to the terminal, once */
 .sw .sw-knob { transform-box: view-box; transform: translateX(0); }
 .sw .sw-plain { opacity: 0; }
-[data-anim].play .sw .sw-knob { animation: sw-knob 7s ease-in-out infinite; }
-[data-anim].play .sw .sw-plain { animation: sw-plain 7s ease-in-out infinite; }
-[data-anim].play .sw .sw-term { animation: sw-term 7s ease-in-out infinite; }
+[data-anim].play .sw .sw-knob { animation: sw-knob 3.2s ease-in-out .4s both; }
+[data-anim].play .sw .sw-plain { animation: sw-plain 3.2s ease-in-out .4s both; }
+[data-anim].play .sw .sw-term { animation: sw-term 3.2s ease-in-out .4s both; }
 .sw .sw-cur { animation: blink 1s steps(1) infinite; }
-@keyframes sw-knob { 0%, 38% { transform: translateX(54px); } 46%, 88% { transform: translateX(0); } 96%, 100% { transform: translateX(54px); } }
-@keyframes sw-plain { 0%, 40% { opacity: 1; } 46%, 90% { opacity: 0; } 96%, 100% { opacity: 1; } }
-@keyframes sw-term { 0%, 40% { opacity: 0; } 48%, 88% { opacity: 1; } 94%, 100% { opacity: 0; } }
+@keyframes sw-knob { 0%, 45% { transform: translateX(54px); } 62%, 100% { transform: translateX(0); } }
+@keyframes sw-plain { 0%, 50% { opacity: 1; } 65%, 100% { opacity: 0; } }
+@keyframes sw-term { 0%, 58% { opacity: 0; } 78%, 100% { opacity: 1; } }
 
 /* fog card: requests zip along the solid links to nearby devices and crawl along the dotted one to the cloud */
-.fog path.fog-p, .fog g.fog-p path { stroke-dasharray: .12 .88; stroke-dashoffset: .12; opacity: 0; }
-[data-anim].play .fog g.fog-p path { animation: fog-run 2.4s linear calc(var(--i, 0) * .35s) infinite; }
-[data-anim].play .fog .fog-slow { animation: fog-run-slow 6s linear .7s infinite; }
-@keyframes fog-run { 0% { stroke-dashoffset: .12; opacity: 1; } 30% { stroke-dashoffset: -.88; opacity: 1; } 31%, 100% { opacity: 0; } }
-@keyframes fog-run-slow { 0% { stroke-dashoffset: .12; opacity: 1; } 95% { stroke-dashoffset: -.88; opacity: 1; } 96%, 100% { opacity: 0; } }
+.fog path.fog-p, .fog g.fog-p path { stroke-dasharray: .12 2; stroke-dashoffset: .12; opacity: 0; }
+[data-anim].play .fog g.fog-p path { animation: fog-run .8s linear calc(var(--i, 0) * .4s) both; }
+[data-anim].play .fog .fog-slow { animation: fog-run 4.5s linear .8s both; }
+@keyframes fog-run { 0% { stroke-dashoffset: .12; opacity: 1; } 97% { stroke-dashoffset: -.88; opacity: 1; } 100% { stroke-dashoffset: -.88; opacity: 0; } }
