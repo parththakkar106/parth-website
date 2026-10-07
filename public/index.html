@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=0c064c38bd">
+<link rel="stylesheet" href="assets/css/site.css?v=b8216105a2">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
   (function () {
@@ -153,14 +153,29 @@
 
         <article class="pj w3">
           <div class="top"><h3>Portfolio website</h3><span class="yr">2026 · parth.party</span></div>
-          <div class="steps" data-anim aria-label="Site pieces"><span>terminal</span><span>LLM chat</span><span>live football</span><span class="you">/penalty</span></div>
+          <div class="viz" data-anim><svg class="sw" viewBox="0 0 300 110" role="img" aria-label="One switch flips the site between a plain page and a terminal">
+            <rect class="tw sl" x="96" y="2" width="108" height="22" rx="11" stroke-width="1.5"/><rect class="a sw-knob" x="98" y="4" width="54" height="18" rx="9" fill-opacity=".28"/>
+            <text class="f" x="125" y="16.5" text-anchor="middle">terminal</text><text class="f" x="178" y="16.5" text-anchor="middle">plain</text>
+            <rect class="tw sl" x="2" y="30" width="296" height="78" rx="9" stroke-width="1.5"/>
+            <g class="sw-plain"><rect class="f" x="14" y="42" width="78" height="10" rx="3"/><rect class="m" x="14" y="58" width="150" height="5" rx="2.5"/><rect class="m" x="14" y="67" width="120" height="5" rx="2.5"/><rect class="a" x="14" y="80" width="62" height="20" rx="5"/><rect class="s" x="82" y="80" width="36" height="20" rx="5"/><rect class="m" x="124" y="80" width="36" height="20" rx="5"/><rect class="m" x="186" y="42" width="100" height="58" rx="6"/></g>
+            <g class="sw-term"><text class="f" x="14" y="50">&gt; who is Parth?</text><circle class="a" cx="17" cy="63" r="3"/><text x="26" y="66">Read(about/me.md)</text><text class="f" x="14" y="84">A software engineer who builds</text><text class="f" x="14" y="98">optimizers and LLM agents.</text><rect class="a sw-cur" x="172" y="89" width="6" height="11"/></g>
+          </svg></div>
           <p>The site you're on: a terminal you can talk to, with a plain view, a penalty shootout and live Barça scores.</p>
           <div class="foot"><span class="tag">JavaScript</span><span class="tag">Cloudflare Pages</span><span class="tag">OpenRouter</span></div>
         </article>
 
         <article class="pj w3">
           <div class="top"><h3>Volunteer-Support Fog Computing</h3><span class="yr">2022 · BITS Pilani</span></div>
-          <div class="steps" aria-label="Where work runs"><span>IoT device</span><span>volunteer node</span><span>fog node</span><span class="you">cloud</span></div>
+          <div class="viz" data-anim><svg class="fog" viewBox="0 0 300 110" role="img" aria-label="An IoT device sends its request to a nearby distributor, which shares it with IoT devices around it over fast solid links, while the far-away cloud is a slow dotted link">
+            <path class="sl" d="M156 52 C190 30 214 18 236 17" stroke-width="1.5" stroke-dasharray="3 4" fill="none"/>
+            <path class="sa fog-p fog-slow" pathLength="1" d="M156 52 C190 30 214 18 236 17" stroke-width="3" fill="none"/>
+            <g class="sa" stroke-width="2" fill="none"><path d="M58 68 H138"/><path d="M146 62 L104 26"/><path d="M146 62 L96 100"/><path d="M146 62 L196 98"/><path d="M146 62 L204 58"/><path d="M146 62 L40 22"/></g>
+            <g class="fog-p" stroke-width="3.5" fill="none" stroke-linecap="round" style="stroke:var(--fg)"><path pathLength="1" d="M58 68 H138"/><path pathLength="1" style="--i:2" d="M146 62 L104 26"/><path pathLength="1" style="--i:2" d="M146 62 L96 100"/><path pathLength="1" style="--i:2" d="M146 62 L196 98"/><path pathLength="1" style="--i:2" d="M146 62 L204 58"/><path pathLength="1" style="--i:2" d="M146 62 L40 22"/></g>
+            <rect class="tw sl" x="236" y="4" width="62" height="26" rx="13" stroke-width="1.5"/><text x="267" y="21" text-anchor="middle">cloud</text>
+            <circle class="a" cx="104" cy="26" r="5"/><circle class="a" cx="96" cy="100" r="5"/><circle class="a" cx="196" cy="98" r="5"/><circle class="a" cx="204" cy="58" r="5"/><circle class="a" cx="40" cy="22" r="5"/>
+            <circle class="f" cx="50" cy="68" r="8"/><text x="10" y="94">IoT device</text>
+            <rect class="s" x="137" y="53" width="18" height="18" rx="4"/><text x="214" y="80">distributor</text><path class="sl" d="M212 77 L158 64" stroke-width="1" fill="none"/>
+          </svg></div>
           <p>A fog-computing system where nearby volunteer nodes share the load for delay-sensitive IoT apps, compared against sending everything to the cloud.</p>
           <div class="foot"><span class="tag">Java</span><span class="tag">Networking</span><span class="tag">IoT</span></div>
         </article>
