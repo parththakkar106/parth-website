@@ -17,7 +17,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=988656a9ba">
+<link rel="stylesheet" href="assets/css/site.css?v=2d83eb7676">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
   (function () {
@@ -129,12 +129,12 @@
         <article class="pj w4 dark">
           <div class="top"><h3><a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">AI D&amp;D</a></h3><span class="yr">2026 · open source</span></div>
           <p>A storytelling engine for immersive, fully customizable worlds, lore and characters. AI writes the story while a deterministic layer keeps the world consistent, so it remembers details across long sessions and lets you branch the story at any turn.</p>
-          <div class="viz"><svg viewBox="0 0 420 96" role="img" aria-label="Branching story tree with three takes on one turn">
-            <g class="sm" stroke-width="1.5" fill="none">
+          <div class="viz" data-anim><svg viewBox="0 0 420 96" role="img" aria-label="Branching story tree with three takes on one turn">
+            <g class="sm an-fade" stroke-width="1.5" fill="none">
               <path d="M30 48 H110"/><path d="M110 48 C140 48 140 18 170 18 H250"/><path d="M110 48 H250"/><path d="M110 48 C140 48 140 78 170 78 H250"/><path d="M250 48 H330"/>
             </g>
-            <path class="sa" d="M30 48 H110 M110 48 H250 M250 48 H330" stroke-width="3" fill="none"/>
-            <circle class="f" cx="30" cy="48" r="7"/><circle class="m" cx="250" cy="18" r="6"/><circle class="a" cx="250" cy="48" r="8"/><circle class="m" cx="250" cy="78" r="6"/><circle class="a" cx="330" cy="48" r="6"/>
+            <path class="sa an-draw" pathLength="1" d="M30 48 H110 M110 48 H250 M250 48 H330" stroke-width="3" fill="none"/>
+            <circle class="f" cx="30" cy="48" r="7"/><circle class="m an-pop" style="--i:5" cx="250" cy="18" r="6"/><circle class="a an-pop" style="--i:6" cx="250" cy="48" r="8"/><circle class="m an-pop" style="--i:7" cx="250" cy="78" r="6"/><circle class="a an-pop" style="--i:10" cx="330" cy="48" r="6"/>
             <circle class="f" cx="110" cy="48" r="6"/>
             <rect class="tw" x="346" y="34" width="72" height="28" rx="8"/><text x="382" y="52" text-anchor="middle">‹ 2/3 ›</text>
             <text x="14" y="76">start</text><text x="205" y="12">take 1</text><text x="205" y="94">take 3</text>
@@ -144,8 +144,8 @@
 
         <article class="pj w2 clay">
           <div class="top"><h3><a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a></h3><span class="yr">2026 · live</span></div>
-          <div class="vs" aria-label="Example duel score">
-            <div class="pl">YOU<b>1,250</b>3× streak</div><div class="mid">VS</div><div class="pl">RIVAL<b>900</b>15s left</div>
+          <div class="vs" data-anim aria-label="Example duel score">
+            <div class="pl">YOU<b data-to="1250">1,250</b>3× streak</div><div class="mid an-pop" style="--i:2">VS</div><div class="pl">RIVAL<b data-to="900">900</b>15s left</div>
           </div>
           <p>Fast-paced, real-time 1v1 trivia to play with friends. Same question, same clock, 120+ topics, all in a comic-book style.</p>
           <div class="foot"><span class="tag">FastAPI</span><span class="tag">WebSockets</span><span class="tag">asyncio</span><span class="tag">Postgres</span><a class="go" href="https://showdown.parth.party/" target="_blank" rel="noopener">Play →</a></div>
@@ -153,7 +153,7 @@
 
         <article class="pj w3">
           <div class="top"><h3>Portfolio website</h3><span class="yr">2026 · parth.party</span></div>
-          <div class="steps" aria-label="Site pieces"><span>terminal</span><span>LLM chat</span><span>live football</span><span class="you">/penalty</span></div>
+          <div class="steps" data-anim aria-label="Site pieces"><span>terminal</span><span>LLM chat</span><span>live football</span><span class="you">/penalty</span></div>
           <p>The site you're on: a terminal you can talk to, with a plain view, a penalty shootout and live Barça scores.</p>
           <div class="foot"><span class="tag">JavaScript</span><span class="tag">Cloudflare Pages</span><span class="tag">OpenRouter</span></div>
         </article>
@@ -182,12 +182,12 @@
           <header><h3>Goldman Sachs <span>· Quantitative Analyst</span></h3><time>Jan 2024 – Present</time></header>
           <div class="work">
             <div class="wcard">
-              <div class="viz"><svg viewBox="0 0 300 110" role="img" aria-label="You ask how to grow the balance by $10bn, the agent shades where growth comes from, and you edit or approve the plan">
-                <rect class="m" x="70" y="2" width="228" height="24" rx="10"/><text class="f" x="82" y="17.5">how can I grow my balance by $10bn?</text>
+              <div class="viz" data-anim><svg viewBox="0 0 300 110" role="img" aria-label="You ask how to grow the balance by $10bn, the agent shades where growth comes from, and you edit or approve the plan">
+                <g class="an-in"><rect class="m" x="70" y="2" width="228" height="24" rx="10"/><text class="f" x="82" y="17.5">how can I grow my balance by $10bn?</text></g>
                 <rect class="tw sl" x="2" y="30" width="196" height="52" rx="10" stroke-width="1.5"/>
-                <rect class="m" x="14" y="39" width="16" height="10" rx="2.5"/><rect class="m" x="34" y="39" width="16" height="10" rx="2.5"/><rect class="a" x="54" y="39" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect class="m" x="74" y="39" width="16" height="10" rx="2.5"/><rect class="a" x="94" y="39" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="a" x="114" y="39" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect class="m" x="134" y="39" width="16" height="10" rx="2.5"/><rect class="a" x="154" y="39" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect class="a" x="174" y="39" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="m" x="14" y="52" width="16" height="10" rx="2.5"/><rect class="a" x="34" y="52" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect class="m" x="54" y="52" width="16" height="10" rx="2.5"/><rect class="a" x="74" y="52" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="a" x="94" y="52" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect class="m" x="114" y="52" width="16" height="10" rx="2.5"/><rect class="a" x="134" y="52" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="a" x="154" y="52" width="16" height="10" rx="2.5" fill-opacity="1"/><rect class="a" x="174" y="52" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect class="a" x="14" y="65" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect class="m" x="34" y="65" width="16" height="10" rx="2.5"/><rect class="a" x="54" y="65" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="a" x="74" y="65" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect class="m" x="94" y="65" width="16" height="10" rx="2.5"/><rect class="a" x="114" y="65" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect class="a" x="134" y="65" width="16" height="10" rx="2.5" fill-opacity="1"/><rect class="a" x="154" y="65" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect class="a" x="174" y="65" width="16" height="10" rx="2.5" fill-opacity="1"/>
+                <rect style="--i:3" class="an-cell m" x="14" y="39" width="16" height="10" rx="2.5"/><rect style="--i:4" class="an-cell m" x="34" y="39" width="16" height="10" rx="2.5"/><rect style="--i:5" class="an-cell a" x="54" y="39" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect style="--i:6" class="an-cell m" x="74" y="39" width="16" height="10" rx="2.5"/><rect style="--i:7" class="an-cell a" x="94" y="39" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:8" class="an-cell a" x="114" y="39" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect style="--i:9" class="an-cell m" x="134" y="39" width="16" height="10" rx="2.5"/><rect style="--i:10" class="an-cell a" x="154" y="39" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect style="--i:11" class="an-cell a" x="174" y="39" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:4" class="an-cell m" x="14" y="52" width="16" height="10" rx="2.5"/><rect style="--i:5" class="an-cell a" x="34" y="52" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect style="--i:6" class="an-cell m" x="54" y="52" width="16" height="10" rx="2.5"/><rect style="--i:7" class="an-cell a" x="74" y="52" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:8" class="an-cell a" x="94" y="52" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect style="--i:9" class="an-cell m" x="114" y="52" width="16" height="10" rx="2.5"/><rect style="--i:10" class="an-cell a" x="134" y="52" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:11" class="an-cell a" x="154" y="52" width="16" height="10" rx="2.5" fill-opacity="1"/><rect style="--i:12" class="an-cell a" x="174" y="52" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect style="--i:5" class="an-cell a" x="14" y="65" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect style="--i:6" class="an-cell m" x="34" y="65" width="16" height="10" rx="2.5"/><rect style="--i:7" class="an-cell a" x="54" y="65" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:8" class="an-cell a" x="74" y="65" width="16" height="10" rx="2.5" fill-opacity=".25"/><rect style="--i:9" class="an-cell m" x="94" y="65" width="16" height="10" rx="2.5"/><rect style="--i:10" class="an-cell a" x="114" y="65" width="16" height="10" rx="2.5" fill-opacity=".75"/><rect style="--i:11" class="an-cell a" x="134" y="65" width="16" height="10" rx="2.5" fill-opacity="1"/><rect style="--i:12" class="an-cell a" x="154" y="65" width="16" height="10" rx="2.5" fill-opacity=".5"/><rect style="--i:13" class="an-cell a" x="174" y="65" width="16" height="10" rx="2.5" fill-opacity="1"/>
                 <rect class="tw sl" x="118" y="88" width="82" height="22" rx="11" stroke-width="1.5"/><text x="159" y="102.5" text-anchor="middle">edit plan</text>
-                <rect class="a" x="206" y="88" width="92" height="22" rx="11"/><text class="tw" x="252" y="102.5" text-anchor="middle">approve ✓</text>
+                <g class="an-ok"><rect class="a" x="206" y="88" width="92" height="22" rx="11"/><text class="tw" x="252" y="102.5" text-anchor="middle">approve ✓</text></g>
                 </svg></div>
               <div class="k">LLM agents</div>
               <h4>AI Funding Planning Assistant</h4>
@@ -195,10 +195,10 @@
               <div class="tags"><span class="tag">LangGraph</span><span class="tag">Pydantic</span><span class="tag">Python</span></div>
             </div>
             <div class="wcard">
-              <div class="viz"><svg viewBox="0 0 300 110" role="img" aria-label="Steps descending across contour lines to the optimum">
+              <div class="viz" data-anim><svg viewBox="0 0 300 110" role="img" aria-label="Steps descending across contour lines to the optimum">
                 <g class="sl" fill="none" stroke-width="1.5"><ellipse cx="200" cy="55" rx="94" ry="50"/><ellipse cx="200" cy="55" rx="66" ry="35"/><ellipse cx="200" cy="55" rx="40" ry="21"/><ellipse cx="200" cy="55" rx="16" ry="9"/></g>
-                <polyline class="sa" points="30,26 96,80 138,32 172,70 190,46 200,55" fill="none" stroke-width="2" stroke-linejoin="round"/>
-                <circle class="f" cx="30" cy="26" r="5"/><circle class="a" cx="96" cy="80" r="3"/><circle class="a" cx="138" cy="32" r="3"/><circle class="a" cx="172" cy="70" r="3"/><circle class="a" cx="190" cy="46" r="3"/><circle class="a" cx="200" cy="55" r="6"/>
+                <polyline class="sa an-draw" pathLength="1" points="30,26 96,80 138,32 172,70 190,46 200,55" fill="none" stroke-width="2" stroke-linejoin="round"/>
+                <circle class="f" cx="30" cy="26" r="5"/><circle class="a an-pop" style="--i:3" cx="96" cy="80" r="3"/><circle class="a an-pop" style="--i:6" cx="138" cy="32" r="3"/><circle class="a an-pop" style="--i:8" cx="172" cy="70" r="3"/><circle class="a an-pop" style="--i:10" cx="190" cy="46" r="3"/><circle class="a an-pop an-glow" style="--i:12" cx="200" cy="55" r="6"/>
                 <text x="16" y="14">start</text><text x="210" y="74">optimum</text>
                 </svg></div>
               <div class="k">Optimization</div>
@@ -207,10 +207,10 @@
               <div class="tags"><span class="tag">Python</span><span class="tag">Optimization</span></div>
             </div>
             <div class="wcard">
-              <div class="viz"><svg viewBox="0 0 300 110" role="img" aria-label="CI/CD pipeline from commit to deploy, with a row of recent runs">
+              <div class="viz" data-anim><svg viewBox="0 0 300 110" role="img" aria-label="CI/CD pipeline from commit to deploy, with a row of recent runs">
                 <line class="sl" x1="20" y1="35" x2="280" y2="35" stroke-width="2"/>
-                <rect class="tw sl" x="2" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="33" y="38.5" text-anchor="middle">commit</text><circle class="a" cx="60" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(60 22)"/><rect class="tw sl" x="80" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="111" y="38.5" text-anchor="middle">build</text><circle class="a" cx="138" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(138 22)"/><rect class="tw sl" x="158" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="189" y="38.5" text-anchor="middle">test</text><circle class="a" cx="216" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(216 22)"/><rect class="a" x="236" y="22" width="62" height="26" rx="13"/><text class="tw" x="267" y="38.5" text-anchor="middle">deploy</text>
-                <text x="2" y="89">runs</text><rect class="s" x="50" y="78" width="14" height="14" rx="3"/><rect class="s" x="70" y="78" width="14" height="14" rx="3"/><rect class="s" x="90" y="78" width="14" height="14" rx="3"/><rect class="s" x="110" y="78" width="14" height="14" rx="3"/><rect class="s" x="130" y="78" width="14" height="14" rx="3"/><rect class="s" x="150" y="78" width="14" height="14" rx="3"/><rect class="m" x="170" y="78" width="14" height="14" rx="3"/><rect class="s" x="190" y="78" width="14" height="14" rx="3"/><rect class="s" x="210" y="78" width="14" height="14" rx="3"/><rect class="s" x="230" y="78" width="14" height="14" rx="3"/><rect class="s" x="250" y="78" width="14" height="14" rx="3"/><rect class="s" x="270" y="78" width="14" height="14" rx="3"/>
+                <rect class="tw sl" x="2" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="33" y="38.5" text-anchor="middle">commit</text><g class="an-pop" style="--i:2"><circle class="a" cx="60" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(60 22)"/></g><rect class="tw sl" x="80" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="111" y="38.5" text-anchor="middle">build</text><g class="an-pop" style="--i:5"><circle class="a" cx="138" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(138 22)"/></g><rect class="tw sl" x="158" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="189" y="38.5" text-anchor="middle">test</text><g class="an-pop" style="--i:8"><circle class="a" cx="216" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(216 22)"/></g><g class="an-ok" style="--i:10"><rect class="a" x="236" y="22" width="62" height="26" rx="13"/><text class="tw" x="267" y="38.5" text-anchor="middle">deploy</text></g>
+                <text x="2" y="89">runs</text><rect style="--i:2" class="an-cell s" x="50" y="78" width="14" height="14" rx="3"/><rect style="--i:3" class="an-cell s" x="70" y="78" width="14" height="14" rx="3"/><rect style="--i:4" class="an-cell s" x="90" y="78" width="14" height="14" rx="3"/><rect style="--i:5" class="an-cell s" x="110" y="78" width="14" height="14" rx="3"/><rect style="--i:6" class="an-cell s" x="130" y="78" width="14" height="14" rx="3"/><rect style="--i:7" class="an-cell s" x="150" y="78" width="14" height="14" rx="3"/><rect style="--i:8" class="an-cell m" x="170" y="78" width="14" height="14" rx="3"/><rect style="--i:9" class="an-cell s" x="190" y="78" width="14" height="14" rx="3"/><rect style="--i:10" class="an-cell s" x="210" y="78" width="14" height="14" rx="3"/><rect style="--i:11" class="an-cell s" x="230" y="78" width="14" height="14" rx="3"/><rect style="--i:12" class="an-cell s" x="250" y="78" width="14" height="14" rx="3"/><rect style="--i:13" class="an-cell s" x="270" y="78" width="14" height="14" rx="3"/>
                 </svg></div>
               <div class="k">Infrastructure</div>
               <h4>Services &amp; DevOps</h4>
@@ -229,12 +229,12 @@
                 <p>A backend that routes electric vehicles past chargers with Dijkstra's algorithm on a geospatial graph, and a full-stack prototype built in a team of four.</p>
                 <div class="tags"><span class="tag">FastAPI</span><span class="tag">Python</span><span class="tag">React</span><span class="tag">MongoDB</span></div>
               </div>
-              <div class="viz"><svg viewBox="0 0 300 96" role="img" aria-label="Graph with the shortest EV route highlighted">
+              <div class="viz" data-anim><svg viewBox="0 0 300 96" role="img" aria-label="Graph with the shortest EV route highlighted">
                 <g class="sl" stroke-width="2">
                   <line x1="16" y1="64" x2="80" y2="80"/><line x1="80" y1="80" x2="146" y2="48"/><line x1="146" y1="48" x2="214" y2="78"/><line x1="214" y1="78" x2="284" y2="44"/><line x1="72" y1="20" x2="200" y2="16"/>
                 </g>
                 <g class="sa" stroke-width="3.5" stroke-linecap="round">
-                  <line x1="16" y1="64" x2="72" y2="20"/><line x1="72" y1="20" x2="146" y2="48"/><line x1="146" y1="48" x2="200" y2="16"/><line x1="200" y1="16" x2="284" y2="44"/>
+                  <line class="an-draw" pathLength="1" style="--i:0" x1="16" y1="64" x2="72" y2="20"/><line class="an-draw" pathLength="1" style="--i:3" x1="72" y1="20" x2="146" y2="48"/><line class="an-draw" pathLength="1" style="--i:6" x1="146" y1="48" x2="200" y2="16"/><line class="an-draw" pathLength="1" style="--i:9" x1="200" y1="16" x2="284" y2="44"/>
                 </g>
                 <circle class="f" cx="16" cy="64" r="6"/><circle class="m" cx="80" cy="80" r="5"/><circle class="a" cx="72" cy="20" r="5"/><circle class="s" cx="146" cy="48" r="7"/><circle class="a" cx="200" cy="16" r="5"/><circle class="m" cx="214" cy="78" r="5"/><circle class="f" cx="284" cy="44" r="6"/>
                 <text x="0" y="88">start</text><text x="132" y="72">charger</text><text x="262" y="66">dest</text>
@@ -305,6 +305,6 @@
     </div>
   </section>
 </main>
-<script src="assets/js/site.js?v=5f7646130c"></script>
+<script src="assets/js/site.js?v=caf9cf1335"></script>
 </body>
 </html>

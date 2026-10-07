@@ -796,6 +796,26 @@
     });
   }
 
+  /* ---------- plain view: card art animates the first time it scrolls into view ---------- */
+  if ('IntersectionObserver' in window && !calm) {
+    var count = function (b) {
+      var to = +b.dataset.to, t0 = performance.now();
+      (function f(now) {
+        var t = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - t, 3);
+        b.textContent = Math.round(to * e).toLocaleString('en-US');
+        if (t < 1) requestAnimationFrame(f);
+      })(t0);
+    };
+    var artIo = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('play'); artIo.unobserve(e.target);
+        [].forEach.call(e.target.querySelectorAll('[data-to]'), count);
+      });
+    }, { threshold: 0.5 });
+    [].forEach.call(plain.querySelectorAll('[data-anim]'), function (n) { n.classList.add('arm'); artIo.observe(n); });
+  }
+
   /* ---------- plain view: faint code rain in the background ---------- */
   (function () {
     var c = document.getElementById('rain'), ctx = c.getContext && c.getContext('2d');
