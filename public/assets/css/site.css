@@ -161,10 +161,10 @@ body.plain .mocknote { color: var(--muted); }
   flex: 1; min-width: 0; background: transparent; border: 0; outline: 0;
   color: var(--t-fg); font: 14px/1.4 var(--mono); caret-color: var(--t-accent);
 }
-.prompt input::placeholder { color: var(--t-faint); }
+.prompt input::placeholder { color: var(--t-dim); }
 .status {
   display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-  font: 12px/1.4 var(--mono); color: var(--t-faint); padding: 6px 4px 0;
+  font: 12px/1.4 var(--mono); color: var(--t-dim); padding: 6px 4px 0;
 }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 .chips button {
