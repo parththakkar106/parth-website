@@ -36,7 +36,7 @@ marked **DEMO**. To go live, in Cloudflare: **Workers & Pages → parth-website 
 
 Redeploy, and the status line changes from DEMO to "model: live via OpenRouter". The key never reaches the browser.
 
-Guardrails in the function: same-site `Origin` check, last 8 turns only, 1,000 characters per message, 700 output
+Guardrails in the function: same-site `Origin` check, last 12 messages only, 1,000 characters per message, 700 output
 tokens. Also add a Cloudflare **rate limiting rule** for `/api/chat` (Security → WAF → Rate limiting rules, e.g.
 10 requests per minute per IP) so nobody can drain the free quota.
 

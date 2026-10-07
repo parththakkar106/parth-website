@@ -81,7 +81,9 @@ async function refresh(cache, key) {
   return { data, body };
 }
 
-export async function onRequestGet({ request, waitUntil }) {
+// The current data, from this edge's cache when it has a copy. Also used by chat.js, so the chat model sees
+// the same matches as /latest.
+export async function footballData(request, waitUntil) {
   const cache = caches.default, key = new Request(new URL('/api/football', request.url).toString());
   const hit = await cache.match(key);
   if (hit) {
@@ -89,10 +91,14 @@ export async function onRequestGet({ request, waitUntil }) {
     let data = null;
     try { data = JSON.parse(body); } catch {}
     if (data && Date.now() - Date.parse(data.updated) > fresh(data)) waitUntil(refresh(cache, key).catch(() => {}));
-    if (data) return send(body, 'public, max-age=60');
+    if (data) return { data, body };
   }
+  return refresh(cache, key);
+}
+
+export async function onRequestGet({ request, waitUntil }) {
   try {
-    const { body } = await refresh(cache, key);
+    const { body } = await footballData(request, waitUntil);
     return send(body, 'public, max-age=60');
   } catch {
     return Response.json({ error: 'unavailable' }, { status: 502, headers: { 'Cache-Control': 'no-store' } });

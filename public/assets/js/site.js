@@ -206,10 +206,12 @@
 
   function runSlash(cmd) {
     var b = el('block', '');
-    if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); return; }
+    if (cmd === '/clear') { [].slice.call(log.querySelectorAll('.u, .block')).forEach(function (n) { n.remove(); }); history = []; return; }
     if (cmd === '/plain') { setView('plain'); return; }
     if (cmd === '/penalty' || cmd === '/football') { penalty(); return; }
-    if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); return; }
+    // the chat model sees which commands ran (and their text) so follow-up questions make sense;
+    // for /latest it fetches the live matches itself
+    if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); remember(cmd, 'Showed the live Barça and Messi matches (/latest).'); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
       b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions ' + rangeText() + ' · includes private repos</span>'));
@@ -219,6 +221,8 @@
     else if (OUT.hasOwnProperty(cmd)) b.appendChild(el('out', OUT[cmd]));
     else b.appendChild(el('dot err', 'Unknown command ' + esc(cmd) + '. Try /help.'));
     log.appendChild(b);
+    if (cmd === '/contributions') remember(cmd, 'Showed Parth\'s GitHub contributions heatmap.');
+    else if (OUT.hasOwnProperty(cmd)) remember(cmd, b.textContent.trim());
   }
 
   var GLYPHS = ['·', '✢', '✳', '✶', '✻', '✽'];
@@ -227,6 +231,8 @@
 
   /* ---------- live model via /api/chat, scripted answers when it is off ---------- */
   var history = [];
+  function remember(cmd, text) { history.push({ role: 'user', content: cmd }, { role: 'assistant', content: text.slice(0, 1000) }); }
+  var TZ = ''; try { TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
   var modelTag = document.getElementById('modelTag');
   var modelLive = false;
   fetch('api/chat', { cache: 'no-store' })
@@ -239,8 +245,8 @@
 
   // Resolves to a streaming Response, or null when the live model is off or unreachable.
   function callModel(q) {
-    var msgs = history.concat([{ role: 'user', content: q }]).slice(-8);
-    return fetch('api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs }) })
+    var msgs = history.concat([{ role: 'user', content: q }]).slice(-12);
+    return fetch('api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: msgs, tz: TZ }) })
       .then(function (r) { return r.ok && r.body && /text\/plain/.test(r.headers.get('content-type') || '') ? r : null; })
       .catch(function () { return null; });
   }
@@ -290,6 +296,11 @@
     });
     chain.then(function () { return live; }).then(function (res) {
       clearInterval(timer); spin.remove();
+      // site commands the server ran for this answer, e.g. /latest for a question about Barça
+      if (res && /(^|,)latest(,|$)/.test(res.headers.get('X-Tools') || '')) {
+        b.appendChild(el('dot tool', '<b>Run</b><span>(/latest)</span>'));
+        b.appendChild(el('res', 'Fetched Barça and Messi\'s matches from ESPN'));
+      }
       var d = el('dot', ''); b.appendChild(d);
       if (res) {
         return streamResponse(d, res).then(function (answer) {
