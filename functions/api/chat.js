@@ -1,14 +1,15 @@
-// POST /api/chat  -> streams the model's answer as text/plain; X-Tools names the site commands it ran (e.g. "latest").
+// POST /api/chat  -> streams the model's answer as text/plain; X-Tools names the tools it ran (see _tools.js).
 // GET  /api/chat  -> { live: boolean } so the page can show whether answers are live or scripted.
 //
 // Configure in Cloudflare Pages > Settings > Variables and secrets:
 //   OPENROUTER_API_KEY  (secret)  your OpenRouter key
 //   OPENROUTER_MODEL    (text)    model id, e.g. one of OpenRouter's ":free" models
 //   OPENROUTER_FALLBACK_MODELS (text, optional) comma-separated models OpenRouter tries when the main one is busy
+//   GITHUB_TOKEN        (secret, optional) a read-only GitHub token; raises the GitHub API limit for the activity tool
 // and a KV namespace bound as NOTES whose key "parth" holds the Markdown notes about Parth (kept out of GitHub).
 // Until all of these are set, POST returns 503 and the page falls back to scripted demo answers.
 import { systemPrompt } from './_knowledge.js';
-import { footballData } from './football.js';
+import { runTools, zoneOk } from './_tools.js';
 
 const MAX_TURNS = 12;
 const MAX_CHARS = 1000;
@@ -24,40 +25,6 @@ const loadNotes = async env => {
   const md = await env.NOTES.get('parth', { cacheTtl: 300 });
   return md && md.replace(/^(# .+\n)[\s\S]*?(?=\n## )/, '$1').trim();
 };
-
-// Site commands the model can draw on. Free models call tools unreliably, so the server runs a command itself
-// when the recent questions are about it and hands the output to the model, and tells the page via X-Tools.
-const FOOTBALL = /\b(bar[cç]a|barcelona|messi|football|soccer|match(es)?|games?|fixtures?|scores?|results?|team|league|la ?liga|inter miami|argentina|play(ed|ing|s)?|won|lost|wins?|los(e|ing)|beat|next one|latest)\b|\/(latest|barca|messi)\b/i;
-
-const zoneOk = tz => { try { new Intl.DateTimeFormat('en-US', { timeZone: tz }); return true; } catch { return false; } };
-const when = (iso, tz) => new Date(iso).toLocaleString('en-US', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-
-// /latest as plain lines for the model, e.g. "last: W 3-1 at Sevilla (LALIGA, Sun, Sep 20, 9:00 PM)".
-function footballText(d, tz) {
-  const score = m => { const us = m.atHome ? m.home : m.away, them = m.atHome ? m.away : m.home; return `${us.score}-${them.score}` + (us.pens != null && them.pens != null ? ` (${us.pens}-${them.pens} on penalties)` : ''); };
-  const vs = (m, named) => (named ? m.team + ' ' : '') + (m.atHome ? 'vs ' : 'at ') + m.opponent;
-  const lines = (f, named) => !f ? ['  feed unavailable'] : [
-    f.live && `  live now: ${score(f.live)} ${vs(f.live, named)} (${f.live.comp}, ${f.live.detail || 'in progress'})`,
-    f.last && `  last: ${f.last.result} ${score(f.last)} ${vs(f.last, named)} (${f.last.comp}, ${when(f.last.date, tz)})`,
-    f.next && !f.live && `  next: ${vs(f.next, named)} (${f.next.comp}, ${when(f.next.date, tz)})`,
-  ].filter(Boolean);
-  return [
-    `Output of /latest (live from ESPN, fetched ${when(d.updated, tz)}; times in the visitor's timezone, ${tz}; now is ${when(new Date().toISOString(), tz)}):`,
-    'FC Barcelona' + (d.barca?.standing ? ` (${d.barca.standing})` : '') + ':', ...lines(d.barca),
-    "Messi's teams (Inter Miami, Argentina):", ...lines(d.messi, true),
-  ].join('\n');
-}
-
-// Runs the commands the recent questions need; returns [{ name, text }].
-async function runTools(messages, tz, request, waitUntil) {
-  const asked = messages.filter(m => m.role === 'user').slice(-3).map(m => m.content).join('\n');
-  const tools = [];
-  if (FOOTBALL.test(asked)) {
-    try { tools.push({ name: 'latest', text: footballText((await footballData(request, waitUntil)).data, tz) }); }
-    catch { tools.push({ name: 'latest', text: 'Output of /latest: the match feed is unavailable right now.' }); }
-  }
-  return tools;
-}
 
 export function onRequestGet({ env }) {
   return Response.json({ live: isLive(env) }, { headers: { 'Cache-Control': 'no-store' } });
@@ -77,7 +44,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!messages.length || messages[messages.length - 1].role !== 'user') return new Response('Bad request', { status: 400 });
 
   const tz = typeof body.tz === 'string' && body.tz.length < 64 && zoneOk(body.tz) ? body.tz : 'UTC';
-  const [notes, tools] = await Promise.all([loadNotes(env), runTools(messages, tz, request, waitUntil)]);
+  const [notes, tools] = await Promise.all([loadNotes(env), runTools({ messages, tz, request, env, waitUntil })]);
   if (!notes) return Response.json({ live: false }, { status: 503 });
 
   const upstream = await fetch('https://openrouter.ai/api/v1/chat/completions', {

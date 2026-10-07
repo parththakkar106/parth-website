@@ -47,7 +47,8 @@ function match(e, ids) {
 
 const get = u => fetch(u, { headers: { Accept: 'application/json' } }).then(r => { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); });
 
-// Merges results and fixtures for one or more teams into { standing, live, last, next }.
+// Merges results and fixtures for one or more teams into { standing, live, last, next }, plus the last
+// and next few matches (recent, upcoming) for the chat model.
 async function follow(ids) {
   const feeds = await Promise.all(ids.flatMap(id => [get(FEED(id)), get(FEED(id) + '?fixture=true')]));
   const byId = new Map();
@@ -57,7 +58,9 @@ async function follow(ids) {
     standing: feeds[0].team?.standingSummary || null,
     live: all.find(m => m.state === 'in') || null,
     last: all.filter(m => m.state === 'post').pop() || null,
-    next: all.find(m => m.state === 'pre') || null
+    next: all.find(m => m.state === 'pre') || null,
+    recent: all.filter(m => m.state === 'post').slice(-3),
+    upcoming: all.filter(m => m.state === 'pre').slice(0, 3)
   };
 }
 

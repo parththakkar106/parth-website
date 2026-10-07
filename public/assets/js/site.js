@@ -250,8 +250,11 @@
       .then(function (r) { return r.ok && r.body && /text\/plain/.test(r.headers.get('content-type') || '') ? r : null; })
       .catch(function () { return null; });
   }
+  // The model asks to run a site command by ending its answer with [run:/projects]; hide that while it streams.
+  var RUNNABLE = ['/about', '/work', '/projects', '/interests', '/latest', '/contributions', '/contact', '/penalty', '/plain'];
+  function stripRun(text) { return text.replace(/\s*\[run:[^\]\n]*\]?/gi, '').replace(/\s*\[(r(u(n)?)?)?$/i, ''); }
   function fmt(text) {
-    return esc(text).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
+    return esc(stripRun(text)).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
   }
   function streamResponse(node, res) {
     var reader = res.body.getReader(), dec = new TextDecoder(), acc = '';
@@ -267,6 +270,7 @@
 
   function ask(q) {
     busy = true;
+    var runAfter = null;
     var b = el('block', ''); log.appendChild(b);
     var spin = el('spin', ''); b.appendChild(spin);
     var gi = 0, vi = Math.floor(Math.random() * VERBS.length), t0 = Date.now();
@@ -296,15 +300,26 @@
     });
     chain.then(function () { return live; }).then(function (res) {
       clearInterval(timer); spin.remove();
-      // site commands the server ran for this answer, e.g. /latest for a question about Barça
-      if (res && /(^|,)latest(,|$)/.test(res.headers.get('X-Tools') || '')) {
-        b.appendChild(el('dot tool', '<b>Run</b><span>(/latest)</span>'));
-        b.appendChild(el('res', 'Fetched Barça and Messi\'s matches from ESPN'));
-      }
+      // tools the server ran for this answer (functions/api/_tools.js), e.g. /latest for a question about Barça
+      if (res) (res.headers.get('X-Tools') || '').split(',').forEach(function (t) {
+        var repo = t.indexOf('readme:') === 0 && t.slice(7);
+        var show = t === 'latest' ? ['Run', '/latest', 'Fetched Barça and Messi\'s matches from ESPN']
+          : t === 'table' ? ['Fetch', 'La Liga table', 'Fetched the standings from ESPN']
+          : t === 'live' ? ['Fetch', 'live match', 'Fetched the goals so far']
+          : t === 'github' ? ['Fetch', 'github.com/parththakkar106', 'Fetched recent commits']
+          : repo ? ['Read', repo + '/README.md', 'Read it from GitHub'] : null;
+        if (!show) return;
+        b.appendChild(el('dot tool', '<b>' + show[0] + '</b><span>(' + esc(show[1]) + ')</span>'));
+        b.appendChild(el('res', esc(show[2])));
+      });
       var d = el('dot', ''); b.appendChild(d);
       if (res) {
         return streamResponse(d, res).then(function (answer) {
+          var m = answer.match(/\[run:\s*(\/[a-z]+)/i), cmd = m && m[1].toLowerCase();
+          answer = stripRun(answer).trim();
+          follow(function () { d.innerHTML = fmt(answer); });
           history.push({ role: 'user', content: q }, { role: 'assistant', content: answer });
+          if (cmd && RUNNABLE.indexOf(cmd) !== -1) runAfter = cmd;
         }, function () {
           d.className = 'dot err'; d.textContent = 'The answer got cut off. Try asking again.';
         });
@@ -315,7 +330,12 @@
       return stream(d, text).then(function () {
         b.appendChild(el('demo', '<span class="demo-pill">DEMO</span> scripted answer · ' + (modelLive ? 'the live AI is busy right now, try again in a minute' : 'the live AI model is not connected yet')));
       });
-    }).then(function () { busy = false; focusInput(); });
+    }).then(function () {
+      busy = false;
+      // the model asked to run a command for the visitor: run it as if they had typed it
+      if (runAfter) { b.appendChild(el('dot tool', '<b>Run</b><span>(' + runAfter + ')</span>')); runSlash(runAfter); scroll(); }
+      if (!busy) focusInput();
+    });
   }
 
 
