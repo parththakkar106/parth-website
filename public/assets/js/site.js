@@ -251,10 +251,13 @@
       .catch(function () { return null; });
   }
   // The model asks to run a site command by ending its answer with [run:/projects]; hide that while it streams.
+  // Only when the visitor asked to see, open or play something; the model is keen to run commands otherwise.
+  var WANTS = /\b(show|see|open|view|display|play|launch|start|switch|go to|take me|bring up|pull up|let me|can i|i want|i'd like|run)\b/i;
   var RUNNABLE = ['/about', '/work', '/projects', '/interests', '/latest', '/contributions', '/contact', '/penalty', '/plain'];
   function stripRun(text) { return text.replace(/\s*\[run:[^\]\n]*\]?/gi, '').replace(/\s*\[(r(u(n)?)?)?$/i, ''); }
   function fmt(text) {
-    return esc(stripRun(text)).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
+    return esc(stripRun(text)).replace(/\*\*([^*]+)\*\*/g, '<span class="h">$1</span>')
+      .replace(/\[([^\]\n]+)\]\((https:\/\/[^)\s"]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>').replace(/`([^`]+)`/g, '<span class="bl">$1</span>');
   }
   function streamResponse(node, res) {
     var reader = res.body.getReader(), dec = new TextDecoder(), acc = '';
@@ -319,7 +322,7 @@
           answer = stripRun(answer).trim();
           follow(function () { d.innerHTML = fmt(answer); });
           history.push({ role: 'user', content: q }, { role: 'assistant', content: answer });
-          if (cmd && RUNNABLE.indexOf(cmd) !== -1) runAfter = cmd;
+          if (cmd && RUNNABLE.indexOf(cmd) !== -1 && WANTS.test(q)) runAfter = cmd;
         }, function () {
           d.className = 'dot err'; d.textContent = 'The answer got cut off. Try asking again.';
         });

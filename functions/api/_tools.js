@@ -6,7 +6,7 @@ import { footballData } from './football.js';
 const GH_USER = 'parththakkar106';
 
 // Questions that trigger each tool (checked against the visitor's last few messages).
-const FOOTBALL = /\b(bar[cç]a|barcelona|messi|football|soccer|match(es)?|games?|fixtures?|scores?|results?|team|league|la ?liga|table|standings?|inter miami|argentina|play(ed|ing|s)?|won|lost|wins?|los(e|ing)|beat|next one|latest)\b|\/(latest|barca|messi)\b/i;
+const FOOTBALL = /\b(bar[cç]a|barcelona|messi|football|soccer|match(es)?|fixtures?|scores?|results?|team|league|la ?liga|table|standings?|inter miami|argentina|won|lost|wins?|los(e|ing)|beat|next one|latest)\b|\/(latest|barca|messi)\b/i;
 const TABLE = /\b(table|standings?|position|place|rank(ed|ing)?|top of|points?|leading|top|first|second|third|la ?liga|league)\b/i;
 const GITHUB = /\b(github|commits?|push(ed|ing)?|repos?|repositor(y|ies)|working on|work(ing)? on|lately|recent(ly)?|right now|these days|this week|currently|latest (project|work)|been (up to|doing|building|coding)|coding|activity|active)\b/i;
 // Public repos the model can read the README of; anything else is matched by its repo name.
