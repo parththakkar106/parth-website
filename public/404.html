@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Not found · parth.party</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#131714">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<!-- Served by Cloudflare Pages for any path that doesn't exist, so everything here is inline and every link is absolute. -->
+<style>
+  :root { --bg: #131714; --fg: #e2e8e2; --dim: #848f87; --faint: #3d4a41; --accent: #18b548; --red: #e07a6e;
+          --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--fg); }
+  body { font: 15px/1.6 var(--mono); display: flex; min-height: 100vh; min-height: 100dvh; align-items: center; justify-content: center; padding: 24px 16px; }
+  .win { width: 100%; max-width: 640px; border: 1px solid var(--accent); border-radius: 12px; padding: 20px 22px; }
+  .hi b { color: var(--accent); margin-right: 8px; }
+  .sub { color: var(--dim); margin-bottom: 18px; }
+  .q { color: var(--dim); }
+  .q::before { content: "> "; color: var(--accent); }
+  .q span { color: var(--fg); word-break: break-all; }
+  .err { color: var(--red); margin: 4px 0 18px; word-break: break-all; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  a { font: 13px/1 var(--mono); color: var(--dim); text-decoration: none; border: 1px solid var(--faint); border-radius: 999px; padding: 9px 13px; }
+  a:hover, a:focus-visible { color: var(--accent); border-color: var(--accent); outline: none; }
+  a.main { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  a.main:hover, a.main:focus-visible { color: var(--bg); filter: brightness(1.1); }
+</style>
+</head>
+<body>
+<main class="win">
+  <div class="hi"><b>✻</b>parth.party</div>
+  <div class="sub">404 · this page doesn't exist</div>
+  <div class="q">cd <span id="path">/that-page</span></div>
+  <div class="err">cd: no such file or directory</div>
+  <div class="row">
+    <a class="main" href="/">Open the terminal</a>
+    <a href="/?view=plain">Go to the plain page</a>
+  </div>
+</main>
+<script>var p = location.pathname; try { p = decodeURIComponent(p); } catch (e) {} document.getElementById('path').textContent = p.slice(0, 120);</script>
+</body>
+</html>
