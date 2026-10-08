@@ -135,23 +135,23 @@
       '<span class="h">Parth Thakkar</span> <span class="d">· software engineer</span>\n' +
       'Quantitative Analyst at Goldman Sachs since Jan 2024, building a Python optimization engine and a LangGraph agent for the weekly funding plan.\n' +
       'CS from BITS Pilani (2024). Builds <a href="https://showdown.parth.party/" target="_blank" rel="noopener">Showdown</a> and <a href="https://dnd.parth.party/" target="_blank" rel="noopener">AI D&amp;D</a> on the side.\n' +
-      '<span class="d">Next: /work · /projects · /interests · or ask anything</span>',
+      '<span class="d">Next: /work, /projects, /interests, or ask anything</span>',
     '/work':
-      '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 – now</span>' +
-      kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent with a human-in-the-loop commit\n<span class="d">LangGraph · Pydantic · Python</span>') +
+      '<span class="h">Goldman Sachs</span> <span class="d">Quantitative Analyst · Jan 2024 - now</span>' +
+      kv('<span class="g">✓</span> AI Planning Assistant', 'ReAct agent with a human-in-the-loop commit\n<span class="d">LangGraph, Pydantic, Python</span>') +
       kv('<span class="g">✓</span> Liability Optimizer', 'optimization engine for firm funding\n<span class="d">Python</span>') +
-      kv('<span class="g">✓</span> Infra', 'microservices with CI/CD, SSO and a Redis cache\n<span class="d">Kubernetes · ArgoCD · Docker · GitLab CI · Redis</span>') + '\n' +
+      kv('<span class="g">✓</span> Infra', 'microservices with CI/CD, SSO and a Redis cache\n<span class="d">Kubernetes, ArgoCD, Docker, GitLab CI, Redis</span>') + '\n' +
       '<span class="h">MapMyIndia</span> <span class="d">Developer Intern · 2022</span>' +
-      kv('<span class="g">✓</span> EV routing backend', 'Dijkstra on a geospatial graph, full-stack prototype\n<span class="d">FastAPI · React · MongoDB</span>'),
+      kv('<span class="g">✓</span> EV routing backend', 'Dijkstra on a geospatial graph, full-stack prototype\n<span class="d">FastAPI, React, MongoDB</span>'),
     '/projects':
-      kv('<span class="h">ai-dnd/</span>', 'AI storytelling with custom worlds, memory and branching\n<span class="d">Python · FastAPI · React · Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
-      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia with friends, 120+ topics\n<span class="d">FastAPI · WebSockets · asyncio · Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
-      kv('<span class="h">portfolio-website/</span>', 'this site, parth.party: a terminal you can talk to\n<span class="d">JavaScript · Cloudflare Pages · OpenRouter</span>') +
-      kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java · Networking</span>') + '\n' +
+      kv('<span class="h">ai-dnd/</span>', 'AI storytelling with custom worlds, memory and branching\n<span class="d">Python, FastAPI, React, Postgres</span>\n<a href="https://dnd.parth.party/" target="_blank" rel="noopener">play demo</a>  <a href="https://github.com/parththakkar106/AI-DnD" target="_blank" rel="noopener">source</a>') +
+      kv('<span class="h">showdown/</span>', 'real-time 1v1 trivia with friends, 120+ topics\n<span class="d">FastAPI, WebSockets, asyncio, Postgres</span>\n<a href="https://showdown.parth.party/" target="_blank" rel="noopener">showdown.parth.party</a>') +
+      kv('<span class="h">portfolio-website/</span>', 'this site, parth.party: a terminal you can talk to\n<span class="d">JavaScript, Cloudflare Pages, OpenRouter</span>') +
+      kv('<span class="h">fog-computing/</span>', 'volunteer nodes share the load for IoT apps <span class="d">(2022)</span>\n<span class="d">Java, Networking</span>') + '\n' +
       '<span class="d">Ask “how does the AI D&amp;D referee work?” for a deeper dive.</span>',
     '/interests':
       '<span class="h">Off the clock</span>' +
-      kv('<span class="h">football</span>', 'watches a lot of it · big Messi fan · follows Barça') +
+      kv('<span class="h">football</span>', 'watches a lot of it, big Messi fan, follows Barça') +
       kv('<span class="h">video games</span>', 'FIFA, Split Fiction, GTA, Watch Dogs, and more') + '\n' +
       '<span class="d">Barça\'s latest: /latest · fancy a shootout? /penalty</span>',
     '/contact':
@@ -214,7 +214,7 @@
     if (cmd === '/latest' || cmd === '/barca' || cmd === '/messi') { latest(b); log.appendChild(b); remember(cmd, 'Showed the live Barça and Messi matches (/latest).'); return; }
     if (cmd === '/help') b.appendChild(el('out', helpText()));
     else if (cmd === '/contributions') {
-      b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions ' + rangeText() + ' · includes private repos</span>'));
+      b.appendChild(el('out', '<a class="h" href="https://github.com/parththakkar106" target="_blank" rel="noopener">github.com/parththakkar106</a> <span class="d">· ' + total.toLocaleString() + ' contributions ' + rangeText() + ', includes private repos</span>'));
       var h = el('heat', '<pre>' + asciiHeat() + '</pre>'); b.appendChild(h);
       b.appendChild(el('out', '<span class="d">less </span><span class="h0">■</span><span class="h1">■</span><span class="h2">■</span><span class="h3">■</span><span class="h4">■</span><span class="d"> more</span>'));
     }
@@ -369,10 +369,10 @@
     var days = Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()) - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 864e5);
     return days <= 0 ? 'today' : days === 1 ? 'tomorrow' : 'in ' + days + ' days';
   }
-  // Score from our side, e.g. "3–1" or "2–2 (2–3 pens)".
+  // Score from our side, e.g. "3-1" or "2-2 (2-3 pens)".
   function fbScore(m) {
     var us = m.atHome ? m.home : m.away, them = m.atHome ? m.away : m.home;
-    return us.score + '–' + them.score + (us.pens != null && them.pens != null ? ' (' + us.pens + '–' + them.pens + ' pens)' : '');
+    return us.score + '-' + them.score + (us.pens != null && them.pens != null ? ' (' + us.pens + '-' + them.pens + ' pens)' : '');
   }
   // "vs Getafe" for Barça; Messi's lines name the team too: "Argentina vs Bolivia", "Inter Miami at Columbus".
   function fbVs(m, named) { return (named ? esc(String(m.team)) + ' ' : '') + (m.atHome ? 'vs ' : 'at ') + esc(String(m.opponent)); }
@@ -383,7 +383,7 @@
     var out = [];
     if (f.live) out.push(['live', fbScore(f.live) + ' ' + fbVs(f.live, named), esc(f.live.detail || '') + ' · ' + esc(f.live.comp), null, f.live.link, CREST[f.live.team]]);
     if (f.last) out.push(['last', fbScore(f.last) + ' ' + fbVs(f.last, named), esc(f.last.comp) + ' · ' + fbDay(f.last.date), f.last.result, f.last.link, CREST[f.last.team]]);
-    if (f.next && !f.live) out.push(['next', fbVs(f.next, named), esc(f.next.comp) + ' · ' + fbDay(f.next.date) + ', ' + fbTime(f.next.date) + ' · ' + fbIn(f.next.date), null, null, CREST[f.next.team]]);
+    if (f.next && !f.live) out.push(['next', fbVs(f.next, named), esc(f.next.comp) + ' · ' + fbDay(f.next.date) + ', ' + fbTime(f.next.date) + ', ' + fbIn(f.next.date), null, null, CREST[f.next.team]]);
     return out;
   }
 
@@ -394,7 +394,7 @@
       function rows(lines) {
         return lines.length ? lines.map(function (l) {
           var k = l[0] === 'live' ? '<span class="pk-miss">live</span>' : '<span class="d">' + l[0] + '</span>';
-          return '\n  ' + k + '  ' + (l[3] ? '<span class="' + rcls[l[3]] + '">' + l[3] + '</span> ' : '') + l[1] + ' <span class="d">· ' + l[2] + '</span>';
+          return '\n  ' + k + '  ' + (l[3] ? '<span class="' + rcls[l[3]] + '">' + l[3] + '</span> ' : '') + l[1] + '  <span class="d">' + l[2] + '</span>';
         }).join('') : '\n  <span class="d">Nothing scheduled right now.</span>';
       }
       var html = '<span class="h">Barça</span>' + (d.barca.standing ? ' <span class="d">· ' + esc(d.barca.standing) + '</span>' : '') + rows(fbLines(d.barca)) + '\n\n' +
@@ -533,7 +533,7 @@
     pen.kicker.style.display = 'none'; pen.aimG.style.display = '';
     pen.bar.classList.remove('clock');
     banner(roundName() + ' · YOU SHOOT', '', true);
-    setButtons(['◀ left', '▲ middle', 'right ▶'], true, '←/↑/→ or 1/2/3 to aim · space to shoot · esc to quit');
+    setButtons(['◀ left', '▲ middle', 'right ▶'], true, '←/↑/→ or 1/2/3 to aim, space to shoot, esc to quit');
     setAim(1);
   }
   function setAim(a) { if (pen && pen.phase === 'aim') { pen.aim = a; place(pen.aimG, AIMX[a], 44); } }
@@ -566,7 +566,7 @@
     pen.aimG.style.display = 'none'; pen.kicker.style.display = ''; pen.kicker.style.opacity = 1;
     pen.bar.classList.add('clock');
     banner(roundName() + ' · YOU SAVE', '', false);
-    setButtons(['◀ dive left', '▲ stay', 'dive right ▶'], false, '←/↑/→ or 1/2/3 to dive · esc to quit');
+    setButtons(['◀ dive left', '▲ stay', 'dive right ▶'], false, '←/↑/→ or 1/2/3 to dive, esc to quit');
   }
 
   function dive(z) {
@@ -710,11 +710,11 @@
     if (!quit && m > c) {
       try { wins = (+localStorage.getItem('pp-pen-wins') || 0) + 1; localStorage.setItem('pp-pen-wins', wins); } catch (e) { wins = 1; }
     }
-    p.bannerB.textContent = (quit ? 'ABANDONED' : 'FULL TIME') + ' · ' + m + '–' + c;
-    var text = quit ? 'Shootout abandoned at ' + m + '–' + c + '.'
-      : m > c ? (p.me.every(Boolean) ? 'You win ' + m + '–' + c + ' without missing. Messi would be proud.' : 'You win ' + m + '–' + c + '.')
-      : c > m ? 'The CPU wins ' + c + '–' + m + '.'
-      : 'Still level at ' + m + '–' + c + ' after ' + MAX_ROUNDS + ' rounds. Call it a draw.';
+    p.bannerB.textContent = (quit ? 'ABANDONED' : 'FULL TIME') + ' · ' + m + '-' + c;
+    var text = quit ? 'Shootout abandoned at ' + m + '-' + c + '.'
+      : m > c ? (p.me.every(Boolean) ? 'You win ' + m + '-' + c + ' without missing. Messi would be proud.' : 'You win ' + m + '-' + c + '.')
+      : c > m ? 'The CPU wins ' + c + '-' + m + '.'
+      : 'Still level at ' + m + '-' + c + ' after ' + MAX_ROUNDS + ' rounds. Call it a draw.';
     if (!quit) { var art = el('out pk-art', ''); p.b.insertBefore(art, p.msg); penArt(art, m > c ? 'win' : c > m ? 'lose' : 'draw', m > c ? m + '-' + c : c + '-' + m); }
     p.msg.innerHTML = '<span class="' + (!quit && c > m ? 'pk-miss' : 'h') + '">' + text + '</span>' + (wins ? '  <span class="d">shootouts won: ' + wins + '</span>' : '') +
       '\n<span class="d">Run /penalty for a rematch.</span>';

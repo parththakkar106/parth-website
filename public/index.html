@@ -20,10 +20,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Fonts load without blocking first paint; the system fallbacks in site.css cover the gap. -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="assets/css/site.css?v=0a6828d062">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;700&display=swap"></noscript>
+<link rel="stylesheet" href="assets/css/site.css?v=d03694a3f4">
 <script>
   /* Pick the view before first paint: ?view=plain|term wins, then the visitor's last choice. */
   (function () {
@@ -34,6 +34,7 @@
 </script>
 </head>
 <body>
+<a class="skip" href="#plain">Skip to content</a>
 <div class="switch" role="group" aria-label="View">
   <button type="button" id="vt" aria-pressed="true">Terminal</button>
   <button type="button" id="vp" aria-pressed="false">Plain</button>
@@ -73,7 +74,7 @@
 </main>
 
 <!-- ================= PLAIN ================= -->
-<main id="plain" aria-label="Plain view" hidden>
+<main id="plain" aria-label="Plain view" tabindex="-1" hidden>
   <canvas id="rain" aria-hidden="true"></canvas>
   <div class="col">
 
@@ -92,7 +93,7 @@
         </div>
       </div>
       <div class="mini" aria-label="Preview of the terminal view">
-        <div class="bar"><i></i><i></i><i></i><span>~/parth — claude</span></div>
+        <div class="bar"><i></i><i></i><i></i><span>~/parth - claude</span></div>
         <div class="body">
           <div class="q">how did Parth start to code?</div>
           <div class="r t">Read<span>(about/me.md)</span></div>
@@ -121,7 +122,7 @@
 <g class="m-l"><circle cx="-6.5" cy="-3.5" r="1.1"/><circle cx="-4.2" cy="1" r="1.1"/><circle cx="-7.4" cy="2.8" r="1.1"/><circle cx="-5" cy="5.8" r="1.1"/></g>
 <g class="m-ls" stroke-width=".7" fill="none"><path d="M-6.5 -3.5 L-4.2 1 L-7.4 2.8 L-5 5.8"/></g>
 <polygon class="m-bg" points="0,-8.2 1.9,-5.2 0,-2.2 -1.9,-5.2"/><rect class="m-bg" x="-.45" y="-2.4" width=".9" height="5"/>
-<path class="m-bgs" d="M7.2 -6.5 C6 -2 5 2 3.4 6.5" stroke-width="1.5" stroke-linecap="round" fill="none"/></g></svg></span><div><b>BITS Pilani</b><span>B.E. (Hons) Computer Science · 2020–2024</span></div></div>
+<path class="m-bgs" d="M7.2 -6.5 C6 -2 5 2 3.4 6.5" stroke-width="1.5" stroke-linecap="round" fill="none"/></g></svg></span><div><b>BITS Pilani</b><span>B.E. (Hons) Computer Science · 2020-2024</span></div></div>
           <a class="fact" href="https://github.com/parththakkar106" target="_blank" rel="noopener"><span class="ic logo"><svg class="mark" viewBox="-3 -3 30 30" aria-hidden="true"><path class="m-a" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></span><div><b>github.com/parththakkar106</b><span>Where the side projects live</span></div></a>
         </div>
       </div>
@@ -157,7 +158,7 @@
           <div class="foot"><span class="tag">FastAPI</span><span class="tag">WebSockets</span><span class="tag">asyncio</span><span class="tag">Postgres</span><a class="go" href="https://showdown.parth.party/" target="_blank" rel="noopener">Play →</a></div>
         </article>
 
-        <article class="pj w3">
+        <article class="pj half">
           <div class="top"><h3>Portfolio website</h3><span class="yr">2026 · parth.party</span></div>
           <div class="viz" data-anim><svg class="sw" viewBox="0 0 300 110" role="img" aria-label="One switch flips the site between a plain page and a terminal">
             <rect class="tw sl" x="96" y="2" width="108" height="22" rx="11" stroke-width="1.5"/><rect class="a sw-knob" x="98" y="4" width="54" height="18" rx="9" fill-opacity=".28"/>
@@ -170,7 +171,7 @@
           <div class="foot"><span class="tag">JavaScript</span><span class="tag">Cloudflare Pages</span><span class="tag">OpenRouter</span></div>
         </article>
 
-        <article class="pj w3">
+        <article class="pj half wide">
           <div class="top"><h3>Volunteer-Support Fog Computing</h3><span class="yr">2022 · BITS Pilani</span></div>
           <div class="viz" data-anim><svg class="fog" viewBox="0 0 300 110" role="img" aria-label="An IoT device sends its request to a nearby distributor, which shares it with IoT devices around it over fast solid links, while the far-away cloud is a slow dotted link">
             <path class="sl" d="M156 52 C190 30 214 18 236 17" stroke-width="1.5" stroke-dasharray="3 4" fill="none"/>
@@ -200,9 +201,9 @@
       <h2 class="sec-title" id="s-exp">What I build at <em>work</em>.</h2>
       <div class="tl">
         <article class="co">
-          <header><h3>Goldman Sachs <span>· Quantitative Analyst</span></h3><time>Jan 2024 – Present</time></header>
+          <header><h3>Goldman Sachs <span>· Quantitative Analyst</span></h3><time>Jan 2024 - Present</time></header>
           <div class="work">
-            <div class="wcard">
+            <div class="wcard lead">
               <div class="viz easy" data-anim><svg viewBox="0 0 300 110" role="img" aria-label="You ask how to grow the balance by $10bn, the agent shades where growth comes from, and you edit or approve the plan">
                 <g class="an-in"><rect class="m" x="70" y="2" width="228" height="24" rx="10"/><text class="f" x="82" y="17.5">how can I grow my balance by $10bn?</text></g>
                 <rect class="tw sl" x="2" y="30" width="196" height="52" rx="10" stroke-width="1.5"/>
@@ -210,10 +211,11 @@
                 <rect class="tw sl" x="118" y="88" width="82" height="22" rx="11" stroke-width="1.5"/><text x="159" y="102.5" text-anchor="middle">edit plan</text>
                 <g class="an-ok"><rect class="a" x="206" y="88" width="92" height="22" rx="11"/><text class="tw" x="252" y="102.5" text-anchor="middle">approve ✓</text></g>
                 </svg></div>
-              <div class="k">LLM agents</div>
-              <h4>AI Funding Planning Assistant</h4>
-              <p>A conversational ReAct agent for funding planning. It explains what's driving the numbers and edits the plan through a human-in-the-loop commit step.</p>
-              <div class="tags"><span class="tag">LangGraph</span><span class="tag">Pydantic</span><span class="tag">Python</span></div>
+              <div class="txt">
+                <h4>AI Funding Planning Assistant</h4>
+                <p>A conversational ReAct agent for funding planning. It explains what's driving the numbers and edits the plan through a human-in-the-loop commit step.</p>
+                <div class="tags"><span class="tag">LangGraph</span><span class="tag">Pydantic</span><span class="tag">Python</span></div>
+              </div>
             </div>
             <div class="wcard">
               <div class="viz" data-anim><svg viewBox="0 0 300 110" role="img" aria-label="Steps descending across contour lines to the optimum">
@@ -222,7 +224,6 @@
                 <circle class="f" cx="30" cy="26" r="5"/><circle class="a an-pop" style="--i:3" cx="96" cy="80" r="3"/><circle class="a an-pop" style="--i:6" cx="138" cy="32" r="3"/><circle class="a an-pop" style="--i:8" cx="172" cy="70" r="3"/><circle class="a an-pop" style="--i:10" cx="190" cy="46" r="3"/><circle class="a an-pop an-glow" style="--i:12" cx="200" cy="55" r="6"/>
                 <text x="16" y="14">start</text><text x="210" y="74">optimum</text>
                 </svg></div>
-              <div class="k">Optimization</div>
               <h4>Liability Optimizer</h4>
               <p>The Python optimization engine that plans how the firm funds itself.</p>
               <div class="tags"><span class="tag">Python</span><span class="tag">Optimization</span></div>
@@ -233,7 +234,6 @@
                 <rect class="tw sl" x="2" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="33" y="38.5" text-anchor="middle">commit</text><g class="an-pop" style="--i:2"><circle class="a" cx="60" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(60 22)"/></g><rect class="tw sl" x="80" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="111" y="38.5" text-anchor="middle">build</text><g class="an-pop" style="--i:5"><circle class="a" cx="138" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(138 22)"/></g><rect class="tw sl" x="158" y="22" width="62" height="26" rx="13" stroke-width="1.5"/><text class="f" x="189" y="38.5" text-anchor="middle">test</text><g class="an-pop" style="--i:8"><circle class="a" cx="216" cy="22" r="6"/><path d="M-2.5 0 L-.6 2 L2.6 -2.2" fill="none" style="stroke:var(--card)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" transform="translate(216 22)"/></g><g class="an-ok" style="--i:10"><rect class="a" x="236" y="22" width="62" height="26" rx="13"/><text class="tw" x="267" y="38.5" text-anchor="middle">deploy</text></g>
                 <text x="2" y="89">runs</text><rect style="--i:2" class="an-cell s" x="50" y="78" width="14" height="14" rx="3"/><rect style="--i:3" class="an-cell s" x="70" y="78" width="14" height="14" rx="3"/><rect style="--i:4" class="an-cell s" x="90" y="78" width="14" height="14" rx="3"/><rect style="--i:5" class="an-cell s" x="110" y="78" width="14" height="14" rx="3"/><rect style="--i:6" class="an-cell s" x="130" y="78" width="14" height="14" rx="3"/><rect style="--i:7" class="an-cell s" x="150" y="78" width="14" height="14" rx="3"/><rect style="--i:8" class="an-cell m" x="170" y="78" width="14" height="14" rx="3"/><rect style="--i:9" class="an-cell s" x="190" y="78" width="14" height="14" rx="3"/><rect style="--i:10" class="an-cell s" x="210" y="78" width="14" height="14" rx="3"/><rect style="--i:11" class="an-cell s" x="230" y="78" width="14" height="14" rx="3"/><rect style="--i:12" class="an-cell s" x="250" y="78" width="14" height="14" rx="3"/><rect style="--i:13" class="an-cell s" x="270" y="78" width="14" height="14" rx="3"/>
                 </svg></div>
-              <div class="k">Infrastructure</div>
               <h4>Services &amp; DevOps</h4>
               <p>Microservices on Kubernetes with CI/CD, logging, SSO and a Redis cache, backed by end-to-end regression tests.</p>
               <div class="tags"><span class="tag">Kubernetes</span><span class="tag">ArgoCD</span><span class="tag">Docker</span><span class="tag">GitLab CI</span><span class="tag">Redis</span></div>
@@ -242,7 +242,7 @@
         </article>
 
         <article class="co">
-          <header><h3><a href="https://www.mapmyindia.com/" target="_blank" rel="noopener">MapMyIndia</a> <span>· Developer Intern</span></h3><time>May – Jul 2022</time></header>
+          <header><h3><a href="https://www.mapmyindia.com/" target="_blank" rel="noopener">MapMyIndia</a> <span>· Developer Intern</span></h3><time>May - Jul 2022</time></header>
           <div class="work">
             <div class="wcard solo">
               <div style="display:grid;gap:10px">
@@ -271,20 +271,29 @@
       <div class="lbl">~/interests</div>
       <h2 class="sec-title" id="s-likes">When I'm not <em>shipping</em>.</h2>
       <div class="likes">
-        <article class="lk">
-          <div class="k">Football</div>
-          <div class="ten" aria-hidden="true">10</div>
-          <h3>Watching football</h3>
-          <p>I watch a lot of it, follow Barça, and I'm a Messi fan through and through.</p>
+        <article class="lk ball">
+          <div class="head">
+            <h3>Watching football</h3>
+            <p>I watch a lot of it, follow Barça, and I'm a Messi fan through and through.</p>
+          </div>
+          <div class="fb" aria-live="polite">
+            <article class="fbc">
+              <header><span class="crest"><img src="assets/img/crests/barca.png" alt="" width="32" height="32"></span><div><h3>Barça</h3><span class="k" id="fbStand">FC Barcelona</span></div></header>
+              <ul id="fbBarca"><li class="fb-msg">Loading…</li></ul>
+            </article>
+            <article class="fbc">
+              <header><span class="crests"><span class="crest"><img src="assets/img/crests/inter-miami.png" alt="" width="32" height="32"></span><span class="crest"><img src="assets/img/crests/argentina.png" alt="" width="32" height="32"></span></span><div><h3>Messi</h3><span class="k">Inter Miami &amp; Argentina</span></div></header>
+              <ul id="fbMessi"><li class="fb-msg">Loading…</li></ul>
+            </article>
+          </div>
+          <small class="fb-src">Live from ESPN, in your timezone. Also in the terminal as <code>/latest</code></small>
         </article>
         <article class="lk">
-          <div class="k">Video games</div>
           <h3>On the controller</h3>
           <div class="chips2"><span class="hot">FIFA</span><span>Split Fiction</span><span>GTA</span><span>Watch Dogs</span><span>and more</span></div>
           <p>Sports games, co-op adventures and open worlds.</p>
         </article>
         <article class="lk dark">
-          <div class="k">Minigame</div>
           <svg class="goal" viewBox="0 0 320 170" aria-hidden="true"><g class="pk-net"><line x1="52" y1="31" x2="52" y2="110"/><line x1="64" y1="31" x2="64" y2="110"/><line x1="76" y1="31" x2="76" y2="110"/><line x1="88" y1="31" x2="88" y2="110"/><line x1="100" y1="31" x2="100" y2="110"/><line x1="112" y1="31" x2="112" y2="110"/><line x1="124" y1="31" x2="124" y2="110"/><line x1="136" y1="31" x2="136" y2="110"/><line x1="148" y1="31" x2="148" y2="110"/><line x1="160" y1="31" x2="160" y2="110"/><line x1="172" y1="31" x2="172" y2="110"/><line x1="184" y1="31" x2="184" y2="110"/><line x1="196" y1="31" x2="196" y2="110"/><line x1="208" y1="31" x2="208" y2="110"/><line x1="220" y1="31" x2="220" y2="110"/><line x1="232" y1="31" x2="232" y2="110"/><line x1="244" y1="31" x2="244" y2="110"/><line x1="256" y1="31" x2="256" y2="110"/><line x1="268" y1="31" x2="268" y2="110"/><line x1="41" y1="42" x2="279" y2="42"/><line x1="41" y1="54" x2="279" y2="54"/><line x1="41" y1="66" x2="279" y2="66"/><line x1="41" y1="78" x2="279" y2="78"/><line x1="41" y1="90" x2="279" y2="90"/><line x1="41" y1="102" x2="279" y2="102"/></g><path class="pk-line" d="M0 110 H320 M110 110 L96 166 M210 110 L224 166"/><path class="pk-frame" d="M40 110 V30 H280 V110"/><g class="pk-kp" transform="translate(160 110)"><circle cx="0" cy="-50" r="5.5"/><path d="M0 -44 V-22 M-15 -56 L0 -40 L15 -56 M0 -22 L-9 0 M0 -22 L9 0"/></g><circle class="pk-ball" cx="160" cy="150" r="6"/></svg>
           <h3>Take a penalty</h3>
           <p>Five kicks against the keeper, right in the terminal.</p>
@@ -292,29 +301,12 @@
         </article>
       </div>
     </section>
-
-    <!-- 8. LATEST: live football from /api/football -->
-    <section aria-labelledby="s-latest">
-      <div class="lbl">~/latest</div>
-      <h2 class="sec-title" id="s-latest">What I'm <em>following</em>.</h2>
-      <div class="fb" aria-live="polite">
-        <article class="fbc">
-          <header><span class="crest"><img src="assets/img/crests/barca.png" alt="" width="32" height="32"></span><div><h3>Barça</h3><span class="k" id="fbStand">FC Barcelona</span></div></header>
-          <ul id="fbBarca"><li class="fb-msg">Loading…</li></ul>
-        </article>
-        <article class="fbc">
-          <header><span class="crests"><span class="crest"><img src="assets/img/crests/inter-miami.png" alt="" width="32" height="32"></span><span class="crest"><img src="assets/img/crests/argentina.png" alt="" width="32" height="32"></span></span><div><h3>Messi</h3><span class="k">Inter Miami &amp; Argentina</span></div></header>
-          <ul id="fbMessi"><li class="fb-msg">Loading…</li></ul>
-        </article>
-      </div>
-      <small class="fb-src">Live from ESPN · times in your timezone · also in the terminal as <code>/latest</code></small>
-    </section>
   </div>
 
   <!-- CONTACT -->
   <section class="contact" aria-labelledby="s-contact">
     <div class="in">
-      <div class="lbl" style="color:#18b548">~/contact</div>
+      <div class="lbl">~/contact</div>
       <h2 id="s-contact">Want to get<br>in touch<span>?</span></h2>
       <p>Want to talk about something more? Whether it's tech, football, or even a 1v1 round in Showdown, I'm always up for it.</p>
       <div class="row">
@@ -326,6 +318,6 @@
     </div>
   </section>
 </main>
-<script src="assets/js/site.js?v=0e2ab1e675"></script>
+<script src="assets/js/site.js?v=133c9f47a2"></script>
 </body>
 </html>
