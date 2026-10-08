@@ -280,12 +280,13 @@ body.plain .mocknote { color: var(--muted); }
 .chips2 span.hot { background: var(--accent); color: #fff; }
 
 /* projects */
-.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.bento { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
 .pj { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
 @media (hover: hover) { .pj:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px rgba(0,0,0,.35); } }
-.pj.w4 { grid-column: span 4; } .pj.w3 { grid-column: span 3; } .pj.w2 { grid-column: span 2; } .pj.w6 { grid-column: span 6; }
+.pj.w4 { grid-column: span 8; } .pj.w2 { grid-column: span 4; } .pj.w6 { grid-column: span 12; }
+.pj.half { grid-column: span 5; } .pj.half.wide { grid-column: span 7; }
 /* side-by-side half cards share row heights, so titles, art, text and tags line up even when one title wraps */
-.pj.w3 { grid-row: span 4; grid-template-rows: subgrid; row-gap: 12px; }
+.pj.half { grid-row: span 4; grid-template-rows: subgrid; row-gap: 12px; }
 .pj.dark { background: var(--ink); color: var(--ink-fg); border-color: var(--ink); }
 .pj.dark p, .pj.dark .yr { color: var(--ink-dim); }
 .pj.dark .viz { background: #19201b; }
@@ -344,8 +345,8 @@ body.plain .mocknote { color: var(--muted); }
   .work { grid-template-columns: 1fr; }
   .wcard.solo, .wcard.lead { grid-column: auto; grid-template-columns: 1fr; }
   .bento { grid-template-columns: 1fr; }
-  .pj.w4, .pj.w3, .pj.w2, .pj.w6 { grid-column: auto; }
-  .pj.w3 { grid-row: auto; grid-template-rows: none; }
+  .pj.w4, .pj.half, .pj.half.wide, .pj.w2, .pj.w6 { grid-column: auto; }
+  .pj.half { grid-row: auto; grid-template-rows: none; }
 }
 @media (max-width: 560px) {
   .menu button { grid-template-columns: 110px 1fr; }
